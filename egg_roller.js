@@ -195,7 +195,7 @@ function rollEgg(){
 	result += formatDragon(dragon_one, 1);
 	
 	if(isTwin != 'no_twins') {
-		result += "\n"
+		result += "<br>"
 		var dragon_two;
 		if(isTwin == 'identical'){
 			dragon_two = { ...dragon_one };
@@ -205,6 +205,7 @@ function rollEgg(){
 		result += formatDragon(dragon_two, 2)
 	}
 
+	result += "<br>"
 	if(hasLineage){ result += "This dragon will receive lineage."; }
 	else { result += "This dragon is first generation."; }
 
@@ -337,10 +338,10 @@ function formatDragon(dragon, num) {
 
 	var dragon_string = ""
 
-	dragon_string += `${num}: ${dragon.gender} ${dragon.temper} ${species} | Healthy\n`
-	dragon_string += `T: ${dragon.coat} Coat, ${dragon.traits.join(", ")}${addedMutation}\n`
-	dragon_string += `G: ${genotype}\n`
-	dragon_string += `P: ${phenotype}\n`
+	dragon_string += `${num}: ${dragon.gender} ${dragon.temper} ${species} | Healthy<br>`
+	dragon_string += `T: ${dragon.coat} Coat, ${dragon.traits.join(", ")}${addedMutation}<br>`
+	dragon_string += `G: ${genotype}<br>`
+	dragon_string += `P: ${phenotype}<br>`
 	if(dragon.skill_breath){
 		if(breaths.includes(dragon.skill_breath)) { dragon_string += `<b>Breath:</b> ${dragon.skill_breath}` }
 		if(skills.includes(dragon.skill_breath)){ dragon_string += `<i>Skill:</i> ${dragon.skill_breath}` }
@@ -418,7 +419,7 @@ function formatDragon(dragon, num) {
 		if (independent_coat.includes("Melanistic")) {
 			if(p) { p += ", "; }
 			p += "Melanistic";
-			independent_coat = independent_coat.replace("Melanistic", "");
+			independent_coat = independent_coat.replace("Melanistic ", "");
 		}
 		// Add colors...
 		if(colors.length > 0) {
@@ -427,6 +428,7 @@ function formatDragon(dragon, num) {
 			p += colors.join(", ");
 		}
 		// Add base
+		if(p) { p += " "; }
 		p += independent_coat
 		if(suffixes.length > 0){
 			p += " with ";
