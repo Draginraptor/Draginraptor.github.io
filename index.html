@@ -5,19 +5,22 @@
 <html lang="en">
     <body>
         <select id="rarity">
-                <option value="common">Common</option>
-                <option value="uncommon">Uncommon</option>
-                <option value="rare">Rare</option>
-                <option value="myst">Mysterious</option>
-            </select>
-            <select id="species">
-                <option value="Stalker Wyvern">Stalker</option>
-                <option value="Ravager Wyvern">Ravager</option>
-                <option value="Warden Dragon">Warden</option>
-                <option value="Greater Emperor">Greater Emperor</option>
-            </select>
-            <input type="checkbox"> Is Activity Egg?
-            <button class="button" onclick=rollEgg()>Roll Egg</button>
+            <option value="common">Common</option>
+            <option value="uncommon">Uncommon</option>
+            <option value="rare">Rare</option>
+            <option value="myst">Mysterious</option>
+        </select>
+        <select id="species">
+            <option value="Stalker Wyvern">Stalker</option>
+            <option value="Ravager Wyvern">Ravager</option>
+            <option value="Warden Dragon">Warden</option>
+            <option value="Greater Emperor">Greater Emperor</option>
+        </select>
+        <br>
+        <input type="checkbox" id="activity"> Is An Activity Egg?
+        <br>
+        <button class="button" onclick=roll()>Roll Egg</button>
+        <p id="result"></p>
     </body>
 
     <script src = "./egg_roller.js"></script>

@@ -153,17 +153,15 @@ const coat_genos = {
 	Melanistic_Golden: 'Uu/hh/Oo/Vv',
 }
 
-//var type = document.getElementById('egg');
-
 function rand(min, max) {
     var min = min || 0,
         max = max || Number.MAX_SAFE_INTEGER;
 
     return Math.floor(Math.random() * (max - min + 1)) + min;}
 
-var type = { value: 'myst' }
-var species = 'Ravager Wyvern'; // overidden if 'isActivity' is true
-var isActivity = false;
+var type = document.getElementById('rarity').value;
+var species = document.getElementById('species').value; // overidden if 'isActivity' is true
+var isActivity = document.getElementById('activity').value;
 var uc_max;
 var r_max;
 var hasLineage = '???';
@@ -185,23 +183,25 @@ function rollEgg(){
 	uc_max = egg_table.uc_max;
 	r_max = egg_table.r_max;
 	
-	console.log(`Egg Details\nType: ${type.value}\nSpecies: ${species}\nisActivity: ${isActivity}\nuc_max: ${uc_max}\nr_max: ${r_max}\nhasLineage: ${hasLineage}\nisTwin: ${isTwin}\n`)
-	
 	var dragon_one = rollDragon(egg_table);
-	console.log("Dragon 1")
-	formatDragon(dragon_one, 1);
+	var result = ""
+	result += formatDragon(dragon_one, 1);
 	
 	if(isTwin != 'no_twins') {
-		console.log('')
+		result += "\n"
 		var dragon_two;
 		if(isTwin == 'identical'){
 			dragon_two = { ...dragon_one };
 		} else if(isTwin == 'non_identical'){
 			dragon_two = rollDragon(egg_table);
 		}
-		console.log("Dragon 2")
-		formatDragon(dragon_two, 2)
+		result += formatDragon(dragon_two, 2)
 	}
+
+	if(hasLineage){ result += "This dragon will receive lineage."; }
+	else { result += "This dragon is first generation."; }
+
+	document.getElementById("result").innerHTML = result;
 }
 
 function rollDragon(egg_table) {
@@ -286,7 +286,6 @@ function rollDragon(egg_table) {
 	
 	function rollMarkings(egg_table) {
 		var num_markings = rand(10, 11);
-		console.log(`Marking Count: ${num_markings}`)
 		var marks = [];
 		for(let i = 0; i < num_markings; i++) {
 			do {
@@ -340,7 +339,7 @@ function formatDragon(dragon, num) {
 		if(skills.includes(dragon.skill_breath)){ dragon_string += `<i>Skill:</i> ${dragon.skill_breath}` }
 	}
 	
-	console.log(dragon_string)
+	return dragon_string
 
 	function formatMarks(marks) {
 		var pheno = [];
@@ -471,14 +470,15 @@ function hasMark(marks_list, mark){
 }
 
 function roll() {
-	//document.getElementById("result").innerHTML = "";
-	items(); 
+	document.getElementById("result").innerHTML = "";
+	rollEgg();
 }
 
 function clearForms() {
-	//document.getElementById("result").innerHTML = "";
+	document.getElementById("result").innerHTML = "";
 }
 
+// Roll a result from a provided object of values
 function getRollResult(roll_table) {
 	table_keys = Object.keys(roll_table);
 	total_chance = 0;
