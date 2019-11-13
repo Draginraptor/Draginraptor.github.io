@@ -293,7 +293,7 @@ function rollDragon(egg_table) {
 	dragon.gender = rand(1, 2) == 1 ? 'Male' : 'Female'
 	
 	function rollMarkings(egg_table) {
-		var num_markings = rand(10, 11);
+		var num_markings = rand(4, 6);
 		var marks = [];
 		for(let i = 0; i < num_markings; i++) {
 			do {
