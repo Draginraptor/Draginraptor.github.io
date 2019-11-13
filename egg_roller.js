@@ -343,8 +343,8 @@ function formatDragon(dragon, num) {
 	dragon_string += `G: ${genotype}<br>`
 	dragon_string += `P: ${phenotype}<br>`
 	if(dragon.skill_breath){
-		if(breaths.includes(dragon.skill_breath)) { dragon_string += `<b>Breath:</b> ${dragon.skill_breath}` }
-		if(skills.includes(dragon.skill_breath)){ dragon_string += `<i>Skill:</i> ${dragon.skill_breath}` }
+		if(breaths.includes(dragon.skill_breath)) { dragon_string += `<b>Breath:</b> ${dragon.skill_breath}<br>` }
+		if(skills.includes(dragon.skill_breath)){ dragon_string += `<i>Skill:</i> ${dragon.skill_breath}<br>` }
 	}
 	
 	return dragon_string
