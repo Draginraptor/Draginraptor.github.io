@@ -153,26 +153,33 @@ const coat_genos = {
 	Melanistic_Golden: 'Uu/hh/Oo/Vv',
 }
 
+var rarity_select = document.getElementById('rarity')
+var species_select = document.getElementById('species')
+var activity_check = document.getElementById('activity')
+
 function rand(min, max) {
     var min = min || 0,
         max = max || Number.MAX_SAFE_INTEGER;
 
     return Math.floor(Math.random() * (max - min + 1)) + min;}
 
-var type = document.getElementById('rarity').value;
-var species = document.getElementById('species').value; // overidden if 'isActivity' is true
-var isActivity = document.getElementById('activity').value;
+var type;
+var species; // overidden if 'isActivity' is true
+var isActivity;
 var uc_max;
 var r_max;
 var hasLineage = '???';
 var isTwin = false;
 
 function rollEgg(){
+	type = rarity_select.value;
+	species = species_select.value;
+	isActivity = activity_check.checked;
 	var egg_table;
-	if (type.value == "common") { egg_table = common_egg; }
-	else if (type.value == "uncommon") { egg_table = uncommon_egg; }
-	else if (type.value == "rare") { egg_table = rare_egg; }
-	else if (type.value == "myst") { egg_table = myst_egg; }
+	if (type == "common") { egg_table = common_egg; }
+	else if (type == "uncommon") { egg_table = uncommon_egg; }
+	else if (type == "rare") { egg_table = rare_egg; }
+	else if (type == "myst") { egg_table = myst_egg; }
 	hasLineage = getRollResult(egg_table.lineage)
 
 	if (isActivity) {
