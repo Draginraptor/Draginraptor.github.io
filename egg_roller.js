@@ -1,3 +1,9 @@
+// All the data used in the roller at the top for easy access
+// Egg data has one entry for each characteristic to roll,
+// which each have their own set of chances for specific outcomes
+// e.g. common egg twin chances have 10 in 'identical', 10 in 'non-identical' and 80 in 'no_twins'
+// When rolled the chance values are totalled and then a random number is rolled between 1 and that total
+// In this case it's 100 (i.e. 10/100 chance for identical etc)
 const common_egg = {
 	twins: { 'identical': 10, 'non_identical': 10, 'no_twins': 80 },
 	markings: { 'common': 80, 'uncommon': 20 },
@@ -62,6 +68,7 @@ const myst_egg = {
 	r_max: 1	
 }
 
+// Arrays of marking arrays in the format ['pheno', 'geno' ]
 const c_marks = [
 	['Blanket', 'nBl'], ['Boar', 'nBr'], ['Collar', 'nCl'], ['Dunstripe', 'nDn'], ['Duo Tone', 'nDo'],
 	['Dusted', 'nDt'], ['Fading', 'nFd'], ['Flaxen', 'nFla'], ['Frog Eye', 'nFe'], ['Greying', 'nGr'],
@@ -103,6 +110,8 @@ const skills = ['Friendly Giant', 'Hoarder', 'Adept', 'Steadfast', 'Swift Feet',
 	'Inner Fire', 'Haunting Roar', 'Healing Aura'];
 const breaths = ['Fire', 'Ice', 'Shadow', 'Lightning', 'Radiation']
 
+// Store trait arrays according to the rarity - ensure that the way rarity is write is the same as
+// is written in the egg
 const eyes = {
 	common: ['Round Eyes', 'Slit Eyes'],
 	uncommon: ['Pale Eyes', 'Pupiless Eyes'],
@@ -126,6 +135,7 @@ const tails = {
 	rare: ['Peacock Tail', 'Kitsune Tail', 'Drape Tail', 'Plated Tail', 'Dragon Tail']
 }
 
+// Used to broadly determine how marks are ordered by group
 const ed_marks = [
 	'Dusted', 'Masked', 'Rimmed', 'Ringed', 'Scaled', 'Banded', 'Crested', 'Dipped', 'Marbled', 'Shaped'
 ];
@@ -153,6 +163,7 @@ const coat_genos = {
 	Melanistic_Golden: 'Uu/hh/Oo/Vv',
 }
 
+// Inputs
 var rarity_select = document.getElementById('rarity')
 var species_select = document.getElementById('species')
 var activity_check = document.getElementById('activity')
@@ -163,8 +174,9 @@ function rand(min, max) {
 
     return Math.floor(Math.random() * (max - min + 1)) + min;}
 
+// Global variables for easy access
 var type;
-var species; // overidden if 'isActivity' is true
+var species; // will be overidden if 'isActivity' is true
 var isActivity;
 var uc_max;
 var r_max;
@@ -172,6 +184,7 @@ var hasLineage = '???';
 var isTwin = false;
 
 function rollEgg(){
+	// Overwrite with current values before rolling
 	type = rarity_select.value;
 	species = species_select.value;
 	isActivity = activity_check.checked;
@@ -183,36 +196,39 @@ function rollEgg(){
 	hasLineage = getRollResult(egg_table.lineage)
 
 	if (isActivity) {
+		// Override the values with the activity variant
 		species = getRollResult(egg_table.act_species);
 		hasLineage = getRollResult(egg_table.act_lineage);
 	}
-	isTwin = getRollResult(egg_table.twins);
 	uc_max = egg_table.uc_max;
 	r_max = egg_table.r_max;
 	
 	var dragon_one = rollDragon(egg_table);
 	var result = ""
 	result += formatDragon(dragon_one, 1);
+
+	isTwin = getRollResult(egg_table.twins);
 	
 	if(isTwin != 'no_twins') {
 		result += "<br>"
 		var dragon_two;
+		dragon_two = rollDragon(egg_table);
 		if(isTwin == 'identical'){
-			dragon_two = { ...dragon_one };
-		} else if(isTwin == 'non_identical'){
-			dragon_two = rollDragon(egg_table);
+			dragon_two.base = dragon_one.base
+			dragon_two.main_marks = dragon_one.main_marks.slice();
 		}
 		result += formatDragon(dragon_two, 2)
 	}
 
 	result += "<br>"
-	if(hasLineage){ result += "This dragon will receive lineage."; }
+	if(hasLineage == 'yes'){ result += "This dragon will receive lineage."; }
 	else { result += "This dragon is first generation."; }
 
 	document.getElementById("result").innerHTML = result;
 }
 
 function rollDragon(egg_table) {
+	// Object that will be returned at the end of function
 	var dragon = {
 		main_marks: [],
 		chim_marks: [],
@@ -229,12 +245,42 @@ function rollDragon(egg_table) {
 		num_rare: 0
 	}
 	
+	dragon.temper = getRollResult(egg_table.temper)
+
+	dragon.base = getRollResult(egg_table.base)
+
+	dragon.coat = getRollResult(egg_table.coat)
+
+	dragon.gender = rand(1, 2) == 1 ? 'Male' : 'Female'
+
+	// Used to track if minimum 1 UC mark is achieved
+	var hasUCOrBetterMark = false;
+
 	dragon.main_marks = rollMarkings(egg_table)
 
+	// Ensure that geno has at least one UC mark
+	if(!hasUCOrBetterMark) {
+		do {
+			var mark_rarity = getRollResult(egg_table.markings);
+		} while(mark_rarity == 'common') // ensure that UC or above is rolled
+
+		var mark_rolled = ['error??!','???'];
+		if(mark_rarity == 'uncommon') { mark_rolled = getRandArrayElement(uc_marks); }
+		else if(mark_rarity == 'rare') { mark_rolled = getRandArrayElement(r_marks); }
+		else if(mark_rarity == 'vrare') { mark_rolled = getRandArrayElement(vr_marks); }
+
+		// Replace one prev mark at random
+		dragon.main_marks[rand(0, dragon.main_marks.length-1)] = mark_rolled;
+		hasUCOrBetterMark = true
+		if (mark_rarity == 'uncommon') { dragon.num_uncommon += 1; }
+		else if (mark_rarity == 'rare' || mark_rarity == 'vrare') { dragon.num_rare += 1; }
+	}
+	
 	// Determine mutations
 	dragon.mutation = getRollResult(egg_table.mutations)
 	if(dragon.mutation == 'yes') {
 		var mute_pool = mutations.slice();
+		// If Ravager, add rav_only_mutes to the pool
 		if (species == 'Ravager Wyvern') { mute_pool.concat(rav_only_mutes.slice()); }
 		dragon.mutation = getRandArrayElement(mute_pool);
 	} else if(dragon.mutation == 'Radiance') {
@@ -252,55 +298,47 @@ function rollDragon(egg_table) {
 		skill_breath_pool = skills.slice().concat(breaths.slice());
 		dragon.skill_breath = getRandArrayElement(skill_breath_pool);
 	}
+
 	// Roll traits (eyes/horns/ears/tails)
+	// Used to track if minimum 1 UC trait is achieved
+	var hasUCOrBetterTrait = false;
 	// Eyes
-	var eyes_rarity = '???'
-	do { eyes_rarity = getRollResult(egg_table.trait); }
-	while (hasReachedMaxUCOrR(eyes_rarity));
-	if(eyes_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-	else if (eyes_rarity == 'rare' || eyes_rarity == 'vrare') { dragon.num_rare += 1; }
-	dragon.traits.push(getRandArrayElement(eyes[eyes_rarity]))
+	dragon.traits.push(rollTrait(eyes))
 	// Horns
-	var horns_rarity = '???'
-	do { horns_rarity = getRollResult(egg_table.trait); }
-	while (hasReachedMaxUCOrR(horns_rarity));
-	if(horns_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-	else if (horns_rarity == 'rare' || horns_rarity == 'vrare') { dragon.num_rare += 1; }
-	dragon.traits.push(getRandArrayElement(horns[horns_rarity]))
+	dragon.traits.push(rollTrait(horns))
 	if (species == 'Ravager Wyvern') {
 		// Ears
-		var ears_rarity = '???'
-		do { ears_rarity = getRollResult(egg_table.trait); }
-		while (hasReachedMaxUCOrR(ears_rarity) || ears_rarity == 'vrare');
-		if(ears_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-		else if (ears_rarity == 'rare') { dragon.num_rare += 1; }
-		dragon.traits.push(getRandArrayElement(ears[ears_rarity]))
+		dragon.traits.push(rollTrait(ears, true))
 		// Tail
-		var tail_rarity = '???'
-		do { tail_rarity = getRollResult(egg_table.trait); }
-		while (hasReachedMaxUCOrR(tail_rarity) || tail_rarity == 'vrare');
-		if(tail_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-		else if (tail_rarity == 'rare') { dragon.num_rare += 1; }
-		dragon.traits.push(getRandArrayElement(tails[tail_rarity]))
+		dragon.traits.push(rollTrait(tails, true))
 	}
-	
-	dragon.temper = getRollResult(egg_table.temper)
 
-	dragon.base = getRollResult(egg_table.base)
-
-	dragon.coat = getRollResult(egg_table.coat)
-
-	dragon.gender = rand(1, 2) == 1 ? 'Male' : 'Female'
+	// Randomly reroll one of the traits
+	// Indexed as follows: 0 = eyes, 1 = horns, 2 = ears, 3 = tails (if applicable)
+	if(!hasUCOrBetterTrait) {
+		// Select random trait to reroll
+		var index = rand(0, dragon.traits.length - 1)
+		var trait_pool;
+		if (index == 0) { trait_pool = eyes; }
+		else if (index == 1) { trait_pool = horns; }
+		else if (index == 2) { trait_pool = ears; }
+		else if (index == 3) { trait_pool = tails; }
+		while(!hasUCOrBetterTrait) {
+			dragon.traits[index] = rollTrait(trait_pool, species == 'Ravager Wyvern')
+		}
+	}
 	
 	function rollMarkings(egg_table) {
 		var num_markings = rand(4, 6);
 		var marks = [];
 		for(let i = 0; i < num_markings; i++) {
+			// Roll rarity - if exceeds max UC or max R, will reroll until it does not
 			do {
 				var mark_rarity = getRollResult(egg_table.markings);
 			} while (hasReachedMaxUCOrR(mark_rarity))
 			
-			mark_rolled = ['error??!','???']
+			var mark_rolled = ['error??!','???'];
+			// Roll actual mark - if repeated, reroll
 			do {
 				if(mark_rarity == 'common') { mark_rolled = getRandArrayElement(c_marks); }
 				else if(mark_rarity == 'uncommon') { mark_rolled = getRandArrayElement(uc_marks); }
@@ -308,11 +346,37 @@ function rollDragon(egg_table) {
 				else if(mark_rarity == 'vrare') { mark_rolled = getRandArrayElement(vr_marks); }
 			} while (marks.includes(mark_rolled))
 			
-			if (mark_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-			else if (mark_rarity == 'rare' || mark_rarity == 'vrare') { dragon.num_rare += 1; }
+			// Update counters and bools, if necessary
+			// If it's the first time UC is rolled, do not count towards max *extra*
+			if (mark_rarity == 'uncommon') {
+				if(hasUCOrBetterMark) { dragon.num_uncommon += 1; }
+				else { hasUCOrBetterMark = true; }
+			}
+			// R and VR always count towards max (they are not 'extras')
+			else if (mark_rarity == 'rare' || mark_rarity == 'vrare') {
+				dragon.num_rare += 1;
+				hasUCOrBetterMark = true;
+			}
 			marks.push(mark_rolled)
 		}
 		return marks;
+	}
+
+	// isRavOnly is a parameter that defaults to false, and does not always need to be specified
+	function rollTrait(traits_table, isRavOnly=false) {
+		var trait_rarity = '???'
+		// Reroll rarity if the dragon alr has the max UC or R, OR vrare is rolled but its a rav only trait
+		do { trait_rarity = getRollResult(egg_table.trait); }
+		while (hasReachedMaxUCOrR(trait_rarity) || (isRavOnly && trait_rarity == 'vrare'));
+		if(trait_rarity == 'uncommon') {
+			if(hasUCOrBetterTrait) { dragon.num_uncommon += 1; }
+			else { hasUCOrBetterTrait = true; }
+		}
+		else if (trait_rarity == 'rare' || trait_rarity == 'vrare') {
+			dragon.num_rare += 1;
+			hasUCOrBetterTrait = true;
+		}
+		return getRandArrayElement(traits_table)
 	}
 
 	function hasReachedMaxUCOrR(rarity) {
