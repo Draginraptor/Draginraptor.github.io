@@ -65,33 +65,45 @@ const myst_egg = {
 	act_species: { 'Stalker Wyvern': 1, 'Ravager Wyvern': 2, 'Warden Dragon': 3 },
 	act_lineage: { 'yes': 75, 'no': 25 },
 	uc_max: 2,
-	r_max: 1	
+	r_max: 1
 }
 
-// Arrays of marking arrays in the format ['pheno', 'geno' ]
+// Arrays of marking arrays in the format ['pheno', 'geno', 'pheno string position']
+// Pheno string order: vr - r - ed - color - suffix (base would go between color and suffix)
+// 3 marks per line
 const c_marks = [
-	['Blanket', 'nBl'], ['Boar', 'nBr'], ['Collar', 'nCl'], ['Dunstripe', 'nDn'], ['Duo Tone', 'nDo'],
-	['Dusted', 'nDt'], ['Fading', 'nFd'], ['Flaxen', 'nFla'], ['Frog Eye', 'nFe'], ['Greying', 'nGr'],
-	['Hood', 'nHd'], ['Leaf', 'nLf'], ['Masked', 'nMa'], ['Pangare', 'nPa'], ['Points', 'nPo'],
-	['Python', 'nPy'], ['Ray', 'nRa'], ['Rimmed', 'nRi'], ['Ringed', 'nRn'], ['Rose', 'nRos'],
-	['Sable', 'nSa'], ['Scaled', 'nSc'], ['Scorching', 'nSo'], ['Skink', 'nSk'], ['Trailing', 'nTr'],
-	['Underbelly', 'nUn']
+	['Blanket', 'nBl', 'suffix'], ['Boar', 'nBr', 'suffix'], ['Collar', 'nCl', 'suffix'],
+	['Dunstripe', 'nDn', 'suffix'], ['Duo Tone', 'nDo', 'suffix'], ['Dusted', 'nDt', 'ed'],
+	['Fading', 'nFd', 'suffix'], ['Flaxen', 'nFla', 'color'], ['Frog Eye', 'nFe', 'suffix'],
+	['Greying', 'nGr', 'color'], ['Hood', 'nHd', 'suffix'], ['Leaf', 'nLf', 'suffix'],
+	['Masked', 'nMa', 'ed'], ['Pangare', 'nPa', 'suffix'], ['Points', 'nPo', 'suffix'],
+	['Python', 'nPy', 'suffix'], ['Ray', 'nRa', 'suffix'], ['Rimmed', 'nRi', 'ed'],
+	['Ringed', 'nRn', 'ed'], ['Rose', 'nRos', 'color'],	['Sable', 'nSa', 'suffix'],
+	['Scaled', 'nSc', 'ed'], ['Scorching', 'nSo', 'suffix'], ['Skink', 'nSk', 'suffix'],
+	['Trailing', 'nTr', 'suffix'], ['Underbelly', 'nUn', 'suffix']
 ];
 const uc_marks = [
-	['Azure', 'nAz'], ['Banded', 'nBa'], ['Bokeh', 'nBk'], ['Border', 'nBo'], ['Cloud', 'nCd'],
-	['Copper', 'nCp'], ['Crested', 'nCr'], ['Crimson', 'nCri'], ['Dipped', 'nDi'], ['Dripping', 'nDr'],
-	['Inkwell', 'nIn'], ['Marbled', 'nMar'], ['Merle', 'nMr'], ['Metallic', 'nMe'], ['Mist', 'nMi'],
-	['Pigeon', 'nPg'], ['Plasma', 'nPs'], ['Roan', 'nRo'], ['Rosettes', 'nRs'], ['Shaped', 'nSp'],
-	['Smoke', 'nSm'], ['Somatic', 'nSt'], ['Tabby', 'nTa'], ['Tobiano', 'nTo'], ['Toxin', 'nTx']
+	['Azure', 'nAz', 'color'], ['Banded', 'nBa', 'ed'], ['Bokeh', 'nBk', 'suffix'],
+	['Border', 'nBo', 'suffix'], ['Cloud', 'nCd', 'suffix'], ['Copper', 'nCp', 'color'],
+	['Crested', 'nCr', 'ed'], ['Crimson', 'nCri', 'color'], ['Dipped', 'nDi', 'ed'],
+	['Dripping', 'nDr', 'suffix'], ['Inkwell', 'nIn', 'suffix'], ['Marbled', 'nMar', 'ed'],
+	['Merle', 'nMr', 'suffix'], ['Metallic', 'nMe', 'suffix'], ['Mist', 'nMi', 'suffix'],
+	['Pigeon', 'nPg', 'suffix'], ['Plasma', 'nPs', 'suffix'], ['Roan', 'nRo', 'suffix'],
+	['Rosettes', 'nRs', 'suffix'], ['Shaped', 'nSp', 'ed'],	['Smoke', 'nSm', 'suffix'],
+	['Somatic', 'nSt', 'suffix'], ['Tabby', 'nTa', 'suffix'], ['Tobiano', 'nTo', 'suffix'],
+	['Toxin', 'nTx', 'suffix']
 ];
 const r_marks = [
-	['Appaloosa', 'nAp'], ['Blooded', 'nBd'], ['Eyes', 'nEy'], ['Glass', 'nGl'], ['Jade', 'nJa'],
-	['Luminescent', 'nLu'], ['Lustrous', 'nLs'], ['Painted', 'nPn'], ['Petal', 'nPl'], ['Vignette', 'nVi']
+	['Appaloosa', 'nAp', 'r'], ['Blooded', 'nBd', 'r'], ['Eyes', 'nEy', 'r'],
+	['Glass', 'nGl', 'r'], ['Jade', 'nJa', 'r'], ['Luminescent', 'nLu', 'r'],
+	['Lustrous', 'nLs', 'r'], ['Painted', 'nPn', 'r'], ['Petal', 'nPl', 'r'],
+	['Vignette', 'nVi', 'r']
 ];
 const vr_marks = [
-	['Aether Marked', 'nAm'], ['Aurora', 'nAu'], ['Gemstone', 'nGm'], ['Iridescent', 'nIr'],
-	['Lepir', 'nLe'], ['Lilac', 'nLi'], ['Prismatic', 'nPr'], ['Rune', 'nRu'], ['Shimmer', 'nSh'],
-	['Triquetra', 'nTri']
+	['Aether Marked', 'nAm', 'vr'], ['Aurora', 'nAu', 'vr'], ['Gemstone', 'nGm', 'vr'],
+	['Iridescent', 'nIr', 'vr'], ['Lepir', 'nLe', 'vr'], ['Lilac', 'nLi', 'vr'],
+	['Prismatic', 'nPr', 'vr'], ['Rune', 'nRu', 'vr'], ['Shimmer', 'nSh', 'vr'],
+	['Triquetra', 'nTri', 'vr']
 ];
 
 const mutations = ['Whiskers', 'Spined', 'Barbed', 'Fanged', 'Spiked', 'Frilled', 'Raptor', 'Tusked',
@@ -134,22 +146,6 @@ const tails = {
 	uncommon: ['Lemur Tail', 'Whip Tail', 'Split Tail', 'Wild Tail', 'Fan Tail'],
 	rare: ['Peacock Tail', 'Kitsune Tail', 'Drape Tail', 'Plated Tail', 'Dragon Tail']
 }
-
-// Used to broadly determine how marks are ordered by group
-const ed_marks = [
-	'Dusted', 'Masked', 'Rimmed', 'Ringed', 'Scaled', 'Banded', 'Crested', 'Dipped', 'Marbled', 'Shaped'
-];
-
-const color_marks = [
-	'Greying', 'Rose', 'Azure', 'Copper', 'Crimson', 'Jade', 'Lilac'
-];
-
-const suffix_marks = [
-	'Blanket', 'Boar', 'Collar', 'Dunstripe', 'Duo Tone', 'Fading', 'Flaxen', 'Frog Eye', 'Hood', 'Leaf', 'Pangare',
-	'Points', 'Python', 'Ray', 'Sable', 'Scorching', 'Skink', 'Trailing', 'Underbelly', 'Bokeh', 'Border',
-	'Cloud', 'Dripping', 'Inkwell', 'Merle', 'Metallic', 'Mist', 'Pigeon', 'Plasma', 'Roan', 'Rosettes',
-	'Smoke', 'Somatic', 'Tabby', 'Tobiano', 'Toxin'
-];
 
 const coat_genos = {
 	Umber: 'Uu/hh/oo/vv',
@@ -221,7 +217,8 @@ function rollEgg(){
 	}
 
 	result += "<br>"
-	if(hasLineage == 'yes'){ result += "This dragon will receive lineage."; }
+	if(isTwin != 'no_twins'){ result += "These dragons will receive lineage."; }
+	else if(hasLineage == 'yes') { result += "This dragon will receive lineage."}
 	else { result += "This dragon is first generation."; }
 
 	document.getElementById("result").innerHTML = result;
@@ -255,24 +252,20 @@ function rollDragon(egg_table) {
 	dragon.gender = rand(1, 2) == 1 ? 'Male' : 'Female'
 
 	// Used to track if minimum 1 UC mark is achieved
-	var hasUCOrBetterMark = false;
+	var hasUCMark = false;
 
 	dragon.main_marks = rollMarkings(egg_table)
 
 	// Ensure that geno has at least one UC mark
-	if(!hasUCOrBetterMark) {
+	if(!hasUCMark) {
+		uc_mark = getRandArrayElement(uc_marks);
+		// Replace one common mark at random
+		var rand_index;
 		do {
-			var mark_rarity = getRollResult(egg_table.markings);
-		} while(mark_rarity == 'common') // ensure that UC or above is rolled
-
-		var mark_rolled = ['error??!','???'];
-		if(mark_rarity == 'uncommon') { mark_rolled = getRandArrayElement(uc_marks); }
-		else if(mark_rarity == 'rare') { mark_rolled = getRandArrayElement(r_marks); }
-		else if(mark_rarity == 'vrare') { mark_rolled = getRandArrayElement(vr_marks); }
-
-		// Replace one prev mark at random
-		dragon.main_marks[rand(0, dragon.main_marks.length-1)] = mark_rolled;
-		hasUCOrBetterMark = true
+			rand_index = rand(0, dragon.main_marks.length-1);
+		} while(!c_marks.includes(dragon.main_marks[rand_index]))
+		dragon.main_marks[rand_index] = uc_mark;
+		hasUCMark = true
 	}
 	
 	// Determine mutations
@@ -305,7 +298,7 @@ function rollDragon(egg_table) {
 
 	// Roll traits (eyes/horns/ears/tails)
 	// Used to track if minimum 1 UC trait is achieved
-	var hasUCOrBetterTrait = false;
+	var hasUCTrait = false;
 	// Eyes
 	dragon.traits.push(rollTrait(eyes))
 	// Horns
@@ -319,17 +312,18 @@ function rollDragon(egg_table) {
 
 	// Randomly reroll one of the traits
 	// Indexed as follows: 0 = eyes, 1 = horns, 2 = ears, 3 = tails (if applicable)
-	if(!hasUCOrBetterTrait) {
+	if(!hasUCTrait) {
 		// Select random trait to reroll
 		var index = rand(0, dragon.traits.length - 1)
 		var trait_pool;
-		if (index == 0) { trait_pool = eyes; }
-		else if (index == 1) { trait_pool = horns; }
-		else if (index == 2) { trait_pool = ears; }
-		else if (index == 3) { trait_pool = tails; }
-		while(!hasUCOrBetterTrait) {
-			dragon.traits[index] = rollTrait(trait_pool, species == 'Ravager Wyvern');
-		}
+		// Replace random common trait
+		do {
+			if (index == 0) { trait_pool = eyes; }
+			else if (index == 1) { trait_pool = horns; }
+			else if (index == 2) { trait_pool = ears; }
+			else if (index == 3) { trait_pool = tails; }
+		} while(!trait_pool['common'].includes(dragon.traits[index]))
+		dragon.traits[index] = getRandArrayElement(trait_pool['uncommon'])
 	}
 	
 	function rollMarkings(egg_table) {
@@ -339,7 +333,7 @@ function rollDragon(egg_table) {
 			// Roll rarity - if exceeds max UC or max R, will reroll until it does not
 			do {
 				var mark_rarity = getRollResult(egg_table.markings);
-			} while (hasReachedMaxUCOrR(mark_rarity, hasUCOrBetterMark))
+			} while (hasReachedMaxUCOrR(mark_rarity))
 			
 			var mark_rolled = ['error??!','???'];
 			// Roll actual mark - if repeated, reroll
@@ -353,13 +347,12 @@ function rollDragon(egg_table) {
 			// Update counters and bools, if necessary
 			// If it's the first time UC is rolled, do not count towards max *extra*
 			if (mark_rarity == 'uncommon') {
-				if(hasUCOrBetterMark) { dragon.num_uncommon += 1; }
-				else { hasUCOrBetterMark = true; }
+				dragon.num_uncommon += 1;
+				hasUCMark = true;
 			}
 			// R and VR always count towards max (they are not 'extras')
 			else if (mark_rarity == 'rare' || mark_rarity == 'vrare') {
 				dragon.num_rare += 1;
-				hasUCOrBetterMark = true;
 			}
 			marks.push(mark_rolled)
 		}
@@ -371,21 +364,20 @@ function rollDragon(egg_table) {
 		var trait_rarity = '???'
 		// Reroll rarity if the dragon alr has the max UC or R, OR vrare is rolled but its a rav only trait
 		do { trait_rarity = getRollResult(egg_table.trait); }
-		while (hasReachedMaxUCOrR(trait_rarity, hasUCOrBetterTrait) || (isRavOnly && trait_rarity == 'vrare'));
+		while (hasReachedMaxUCOrR(trait_rarity) || (isRavOnly && trait_rarity == 'vrare'));
 		if(trait_rarity == 'uncommon') {
-			if(hasUCOrBetterTrait) { dragon.num_uncommon += 1; }
-			else { hasUCOrBetterTrait = true; }
+			dragon.num_uncommon += 1;
+			hasUCTrait = true;
 		}
 		else if (trait_rarity == 'rare' || trait_rarity == 'vrare') {
 			dragon.num_rare += 1;
-			hasUCOrBetterTrait = true;
 		}
 		return getRandArrayElement(traits_table[trait_rarity])
 	}
 
-	function hasReachedMaxUCOrR(rarity, hasMetMin) {
-		return ((rarity == 'uncommon' && dragon.num_uncommon >= uc_max && hasMetMin) || 
-		(rarity == 'rare' || rarity == 'vrare') && dragon.num_rare >= r_max && hasMetMin)
+	function hasReachedMaxUCOrR(rarity) {
+		return ((rarity == 'uncommon' && dragon.num_uncommon >= uc_max) || 
+		(rarity == 'rare' || rarity == 'vrare') && dragon.num_rare >= r_max)
 	}
 
 	return dragon;
@@ -420,38 +412,27 @@ function formatDragon(dragon, num) {
 	return dragon_string
 
 	function formatMarks(marks) {
-		var pheno = [];
-		var geno = [];
-		for (let i = 0; i < marks.length; i++){
-			pheno.push(marks[i][0]);
-			geno.push(marks[i][1]);
-		}
-		var independent_coat = dragon.base
-		if(independent_coat.includes("Melanistic")) {
-			pheno.push("Melanistic");
-			independent_coat = independent_coat.replace("Melanistic ", "")
-		}
-		pheno.push(independent_coat)
-		
-		
+		var p = "";
+
 		// Sort by grouping: vr - r - ed - mela - colors - coat - suffixes
 		var vr_group = [];
 		var r_group = [];
 		var ed_group = [];
 		var colors = [];
 		var suffixes = [];
-		
-		for (let i = 0; i < pheno.length; i++) {
-			if(vr_marks.includes(pheno[i])) { vr_group.push(pheno[i]); }
-			else if(r_marks.includes(pheno[i])) { r_marks.push(pheno[i]); }
-			else if(ed_marks.includes(pheno[i])) { ed_group.push(pheno[i]); }
-			else if(color_marks.includes(pheno[i])) { colors.push(pheno[i]); }
-			else if(suffix_marks.includes(pheno[i])) { suffixes.push(pheno[i]); }
+		for (let i = 0; i < marks.length; i++) {
+			mark = marks[i]
+			if(mark[2] == 'vr') { vr_group.push(marks[i][0]); }
+			else if(mark[2] == 'r') { r_group.push(marks[i][0]); }
+			else if(mark[2] == 'ed') { ed_group.push(marks[i][0]); }
+			else if(mark[2] == 'color') { colors.push(marks[i][0]); }
+			else if(mark[2] == 'suffix') { suffixes.push(marks[i][0]); }
 		}
+		console.log(vr_group)
 
 		// Then by rarity: c - uc, followed by alphabetical asc
-		vr_marks.sort();
-		r_marks.sort();
+		vr_group.sort();
+		r_group.sort();
 		ed_group.sort(function(a,b) {
 			if(getMarkRarity(a) < getMarkRarity(b)) { return -1; }
 			if(getMarkRarity(a) > getMarkRarity(b)) { return 1; }
@@ -468,7 +449,6 @@ function formatDragon(dragon, num) {
 			return a.toString().localeCompare(b.toString());
 		});
 	
-		var p = "";
 		// Add vr, if applicable
 		if(vr_group.length > 0) {
 			p += vr_group.join(", ");
@@ -512,6 +492,11 @@ function formatDragon(dragon, num) {
 				p += suffixes.join(", ");
 				p += " and " + last_suffix;
 			}
+		}
+		
+		var geno = [];
+		for (let i = 0; i < marks.length; i++){
+			geno.push(marks[i][1]);
 		}
 		
 		var g = coat_genos[dragon.base.replace(" ", "_")] + "+";
