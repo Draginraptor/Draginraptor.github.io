@@ -240,7 +240,8 @@ function rollDragon(egg_table) {
 		chim_coat: '???',
 		radiance_geno: '',
 		mutation: '???',
-		skill_breath: '???',
+		skill: '???',
+		breath: '???',
 		num_uncommon: 0,
 		num_rare: 0
 	}
@@ -272,8 +273,6 @@ function rollDragon(egg_table) {
 		// Replace one prev mark at random
 		dragon.main_marks[rand(0, dragon.main_marks.length-1)] = mark_rolled;
 		hasUCOrBetterMark = true
-		if (mark_rarity == 'uncommon') { dragon.num_uncommon += 1; }
-		else if (mark_rarity == 'rare' || mark_rarity == 'vrare') { dragon.num_rare += 1; }
 	}
 	
 	// Determine mutations
@@ -292,11 +291,16 @@ function rollDragon(egg_table) {
 		dragon.chim_coat = getRollResult(egg_table.base)
 	}
 
-	// Roll skills/breath
-	dragon.skill_breath = getRollResult(egg_table.skill_breath);
-	if (dragon.skill_breath == 'yes') {
-		skill_breath_pool = skills.slice().concat(breaths.slice());
-		dragon.skill_breath = getRandArrayElement(skill_breath_pool);
+	// Roll skill
+	dragon.skill = getRollResult(egg_table.skill_breath);
+	if (dragon.skill == 'yes') {
+		dragon.skill = getRandArrayElement(skills);
+	}
+
+	// Roll breath
+	dragon.breath = getRollResult(egg_table.skill_breath);
+	if (dragon.breath == 'yes') {
+		dragon.breath = getRandArrayElement(breaths);
 	}
 
 	// Roll traits (eyes/horns/ears/tails)
@@ -324,7 +328,7 @@ function rollDragon(egg_table) {
 		else if (index == 2) { trait_pool = ears; }
 		else if (index == 3) { trait_pool = tails; }
 		while(!hasUCOrBetterTrait) {
-			dragon.traits[index] = rollTrait(trait_pool, species == 'Ravager Wyvern')
+			dragon.traits[index] = rollTrait(trait_pool, species == 'Ravager Wyvern');
 		}
 	}
 	
@@ -335,7 +339,7 @@ function rollDragon(egg_table) {
 			// Roll rarity - if exceeds max UC or max R, will reroll until it does not
 			do {
 				var mark_rarity = getRollResult(egg_table.markings);
-			} while (hasReachedMaxUCOrR(mark_rarity))
+			} while (hasReachedMaxUCOrR(mark_rarity, hasUCOrBetterMark))
 			
 			var mark_rolled = ['error??!','???'];
 			// Roll actual mark - if repeated, reroll
@@ -367,7 +371,7 @@ function rollDragon(egg_table) {
 		var trait_rarity = '???'
 		// Reroll rarity if the dragon alr has the max UC or R, OR vrare is rolled but its a rav only trait
 		do { trait_rarity = getRollResult(egg_table.trait); }
-		while (hasReachedMaxUCOrR(trait_rarity) || (isRavOnly && trait_rarity == 'vrare'));
+		while (hasReachedMaxUCOrR(trait_rarity, hasUCOrBetterTrait) || (isRavOnly && trait_rarity == 'vrare'));
 		if(trait_rarity == 'uncommon') {
 			if(hasUCOrBetterTrait) { dragon.num_uncommon += 1; }
 			else { hasUCOrBetterTrait = true; }
@@ -376,12 +380,12 @@ function rollDragon(egg_table) {
 			dragon.num_rare += 1;
 			hasUCOrBetterTrait = true;
 		}
-		return getRandArrayElement(traits_table)
+		return getRandArrayElement(traits_table[trait_rarity])
 	}
 
-	function hasReachedMaxUCOrR(rarity) {
-		return ((rarity == 'uncommon' && dragon.num_uncommon >= uc_max) || 
-		(rarity == 'rare' || rarity == 'vrare') && dragon.num_rare >= r_max)
+	function hasReachedMaxUCOrR(rarity, hasMetMin) {
+		return ((rarity == 'uncommon' && dragon.num_uncommon >= uc_max && hasMetMin) || 
+		(rarity == 'rare' || rarity == 'vrare') && dragon.num_rare >= r_max && hasMetMin)
 	}
 
 	return dragon;
@@ -406,9 +410,11 @@ function formatDragon(dragon, num) {
 	dragon_string += `T: ${dragon.coat} Coat, ${dragon.traits.join(", ")}${addedMutation}<br>`
 	dragon_string += `G: ${genotype}<br>`
 	dragon_string += `P: ${phenotype}<br>`
-	if(dragon.skill_breath){
-		if(breaths.includes(dragon.skill_breath)) { dragon_string += `<b>Breath:</b> ${dragon.skill_breath}<br>` }
-		if(skills.includes(dragon.skill_breath)){ dragon_string += `<i>Skill:</i> ${dragon.skill_breath}<br>` }
+	if(dragon.skill != 'no'){
+		dragon_string += `<i>Skill:</i> ${dragon.skill}<br>`
+	}
+	if(dragon.breath != 'no') {
+		dragon_string += `<b>Breath:</b> ${dragon.breath}<br>`
 	}
 	
 	return dragon_string
