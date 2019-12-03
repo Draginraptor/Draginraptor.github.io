@@ -255,18 +255,6 @@ function rollDragon(egg_table) {
 	var hasUCMark = false;
 
 	dragon.main_marks = rollMarkings(egg_table)
-
-	// Ensure that geno has at least one UC mark
-	if(!hasUCMark) {
-		uc_mark = getRandArrayElement(uc_marks);
-		// Replace one common mark at random
-		var rand_index;
-		do {
-			rand_index = rand(0, dragon.main_marks.length-1);
-		} while(!c_marks.includes(dragon.main_marks[rand_index]))
-		dragon.main_marks[rand_index] = uc_mark;
-		hasUCMark = true
-	}
 	
 	// Determine mutations
 	dragon.mutation = getRollResult(egg_table.mutations)
@@ -310,6 +298,18 @@ function rollDragon(egg_table) {
 		dragon.traits.push(rollTrait(tails, true))
 	}
 
+	// Ensure that geno has at least one UC mark
+	if(!hasUCMark) {
+		uc_mark = getRandArrayElement(uc_marks);
+		// Replace one common mark at random
+		var rand_index;
+		do {
+			rand_index = rand(0, dragon.main_marks.length-1);
+		} while(!c_marks.includes(dragon.main_marks[rand_index]))
+		dragon.main_marks[rand_index] = uc_mark;
+		hasUCMark = true;
+	}
+
 	// Randomly reroll one of the traits
 	// Indexed as follows: 0 = eyes, 1 = horns, 2 = ears, 3 = tails (if applicable)
 	if(!hasUCTrait) {
@@ -324,6 +324,7 @@ function rollDragon(egg_table) {
 			else if (index == 3) { trait_pool = tails; }
 		} while(!trait_pool['common'].includes(dragon.traits[index]))
 		dragon.traits[index] = getRandArrayElement(trait_pool['uncommon'])
+		hasUCTrait = true;
 	}
 	
 	function rollMarkings(egg_table) {
