@@ -1,0 +1,39 @@
+<!doctype html>
+<head>
+    <title>(Test) Quest Roller</title>
+</head>
+<html lang="en">
+    <body>
+        <a href="index.html">Back to navigation</a>
+        <br>
+        <br>
+        <select id="quest">
+            <optgroup label="Basic">
+                <option value="b1">A Path Less Traveled</option>
+                <option value="b2">Counting Sheep</option>
+                <option value="b3">A Festival of Honor</option>
+                <option value="b4">New Discoveries</option>
+                <option value="b5">Tanning the Hide</option>
+                <option value="b6">Show Me Your Bug Collection</option>
+            <optgroup label="Intermediate">
+                <option value="i1">A Missing Friend</option>
+                <option value="i2">Aiding the Injured</option>
+                <option value="i3">Where's the Gold?</option>
+                <option value="i4">The Cutest Critter You Ever did See</option>
+                <option value="i5">The Gardener's Knowledge</option>
+                <option value="i6">Clockmaker's Friend</option>
+                <option value="i7">Hiding in Plain Sight</option>
+            <optgroup label="Master">
+                <option value="m1">Lurking in the Waters</option>
+                <option value="m2">Surveying the Aether</option>
+                <option value="m3">The Breath of a Dragon</option>
+                <option value="m4">A Serpent's Touch</option>
+                <option value="m5">Tiny Griffins</option>
+        </select>
+        <button class="button" onclick=roll()>Roll Quest</button>
+        <p id="result" style="border: 2px solid black;"></p>
+        <br>
+    </body>
+
+    <script src = "./quest_roller.js"></script>
+</html>
