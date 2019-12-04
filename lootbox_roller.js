@@ -10,6 +10,9 @@ function items(){
 	var lootSize;
     var itemlist="";
     var loot_table;
+    // Each loot entry is [loot, chance value]
+    // Total chance of lootbox is the total of all the chance values in the table
+    // Chance of loot dropping = chance value/total
     var fishing_loot = {
 		":thumb737120461:": 5,
 		":thumb737120468:": 5,
@@ -221,18 +224,7 @@ function items(){
         else if (type.value == "prem") { loot_table = prem_loot; }
         else if (type.value == "myst") { loot_table = myst_loot; }
         try {
-            loot_array = []
-            loot_keys = Object.keys(loot_table)
-            for (let k = 0; k < loot_keys.length; k++){
-                var key = loot_keys[k]
-                for (let i = 0; i < loot_table[key]; i++) {
-                    loot_array.push(key);
-                }
-            }
-            console.log(`Chest type: ${type.value}, Total chance range: ${loot_array.length}`);
-            var rand_num = rand(0,loot_array.length-1);
-            console.log(rand_num)
-            itemlist += loot_array[rand_num];
+            itemlist += getRollResult(loot_table)
         } catch (err) {
             itemlist += "error??!!";
         }
@@ -254,6 +246,19 @@ function roll() {
 
 function clearForms() {
 	document.getElementById("result").innerHTML = "";
+}
+
+// Roll a result from a provided object of values
+function getRollResult(roll_table) {
+	table_keys = Object.keys(roll_table);
+	total_chance = 0;
+	for(let i = 0; i < table_keys.length; i++) { total_chance += roll_table[table_keys[i]]; }
+	var rand_num = rand(1, total_chance);
+	for(let i = 0; i < table_keys.length; i++) {
+		if(rand_num <= roll_table[table_keys[i]]) { return table_keys[i]; }
+		else { rand_num -= roll_table[table_keys[i]]; }
+	}
+	return "error!!?"
 }
 
 // JavaScript Document
