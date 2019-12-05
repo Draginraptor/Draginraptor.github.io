@@ -37,19 +37,33 @@ const quests = {
             ":thumb753647382:": 2  // Inkwell
         }
     ),
+    "b2": new Quest("Counting Sheep", ["non-magic"], 
+        {
+            
+        }
+    ),
 }
 
 var quest;
 var rank;
 var temper;
-var magic;
-var extras; // Includes items, familiars, taming
-var has_other_dragon;
+var magic_level;
+var magic_type;
+// If there are items and familiars added in the future, add a new var for each?
+var taming;
 var has_bonded; // or same flight; overwrites has_other_dragon
+var has_other_dragon;
 
 // Updates inputs for next roll
 function readInputs() {
-
+    quest = document.getElementById("quest").value;
+    rank = document.getElementById("rank").value;
+    temper = document.getElementById("temper").value;
+    magic_level = document.getElementById("magic_level").value;
+    magic_type = document.getElementById("magic_type").value;
+    taming = document.getElementById("taming").value;
+    has_other_dragon = document.getElementById("other_dragon").value;
+    has_bonded = document.getElementById("bonded").value;
 }
 
 function rollQuest() {
