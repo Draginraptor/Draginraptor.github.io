@@ -46,15 +46,35 @@
             <option value="aggressive">Aggressive</option>
         </select>
         <br>
-        <select id="magic">
+        <select id="magic_level">
             <option value="none">None</option>
             <option value="low">Low</option>
             <option value="high">High</option>
         </select>
         <br>
-        <p>Items, Familiars, Taming</p>
-        <br>
-        <p>Has Bonded? --- Has Other Dragon? (Bonded Overrides Other Dragon)</p>
+        <select id="magic_type">
+                <option value="none">None</option>
+                <option value="arcane">Arcane</option>
+                <option value="illusionist">Illusionist</option>
+                <option value="elementalist">Elementalist</option>
+                <option value="healing">Healing</option>
+                <option value="enchantment">Enchantment</option>
+            </select>
+        <hr>
+        <p>
+            <b>Items</b>
+            -- None --
+        </p>
+        <hr>
+        <p>
+            <b>Familiars</b>
+            -- None --
+        </p>
+        <input type="checkbox" id="taming">Has Domesticated Taming?</input>
+        <hr>
+        <p>(Bonded Overrides Other Dragon)</p>
+        <input type="checkbox" id="bonded">Has Bonded Dragon/Partner or Flight Member?</input>
+        <input type="checkbox" id="other_dragon">Has Other Dragon?</input>
         <button class="button" onclick=roll()>Roll Quest</button>
         <p id="result" style="border: 2px solid black;"></p>
         <br>
