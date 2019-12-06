@@ -7,6 +7,7 @@
         <a href="index.html">Back to navigation</a>
         <br>
         <br>
+        <b>Quests</b><br>
         <select id="quest">
             <optgroup label="Basic">
                 <option value="b1">A Path Less Traveled</option>
@@ -31,6 +32,7 @@
                 <option value="m5">Tiny Griffins</option>
         </select>
         <br>
+        <b>Rank</b><br>
         <select id="rank">
             <option value="fledgling">Fledgling</option>
             <option value="primal">Primal</option>
@@ -38,7 +40,8 @@
             <option value="primordial">Primordial</option>
         </select>
         <br>
-        <p>Timid will reduce injury chance by 5%, Aggressive will increase injury chance by 5%</p>
+        <b>Temper</b><br>
+        Timid will reduce injury chance by 5%, Aggressive will increase injury chance by 5%
         <br>
         <select id="temper">
             <option value="na">N/A</option>
@@ -46,12 +49,14 @@
             <option value="aggressive">Aggressive</option>
         </select>
         <br>
+        <b>Magic Level</b><br>
         <select id="magic_level">
             <option value="none">None</option>
             <option value="low">Low</option>
             <option value="high">High</option>
         </select>
         <br>
+        <b>Magic Type</b><br>
         <select id="magic_type">
                 <option value="none">None</option>
                 <option value="arcane">Arcane</option>
@@ -61,23 +66,25 @@
                 <option value="enchantment">Enchantment</option>
             </select>
         <hr>
+        <p>(Bonded Overrides Other Dragon)</p>
+        <input type="checkbox" id="bonded">Has Bonded Dragon/Partner or Flight Member?</input>
+        <input type="checkbox" id="other_dragon">Has Other Dragon?</input>
+        <hr>
         <p>
             <b>Items</b>
             -- None --
+            <input type="checkbox" name="extras" value="test1">test1</input>
         </p>
         <hr>
         <p>
             <b>Familiars</b>
             -- None --
+            <input type="checkbox" name="extras" value="test2">test2</input>
         </p>
-        <input type="checkbox" id="taming">Has Domesticated Taming?</input>
+        <input type="checkbox" name="extras" value="domes_taming">Has Domesticated Taming?</input>
         <hr>
-        <p>(Bonded Overrides Other Dragon)</p>
-        <input type="checkbox" id="bonded">Has Bonded Dragon/Partner or Flight Member?</input>
-        <input type="checkbox" id="other_dragon">Has Other Dragon?</input>
         <button class="button" onclick=roll()>Roll Quest</button>
         <p id="result" style="border: 2px solid black;"></p>
-        <br>
     </body>
 
     <script src = "./quest_roller.js"></script>
