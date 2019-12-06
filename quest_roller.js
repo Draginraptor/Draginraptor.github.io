@@ -17,6 +17,20 @@ const base_pass = {
     "primordial": 65
 }
 
+// Pass rate boosts based on magic level
+const magic_level_pass = {
+    "none": 0,
+    "low": 5,
+    "high": 10
+}
+
+// Pass rate boosts based on items, familiars, or taming
+const extra_pass = {
+    "domes_taming": 5,
+    "test1": 5,
+    "test2": 5
+}
+
 const base_injury = {
     "fledgling": 40,
     "primal": 30,
@@ -40,7 +54,7 @@ class Quest {
 
 // Dict of quests accessed with input taken from the html
 const quests = {
-    "b1": new Quest("A Path Less Traveled", ["none"], 
+    "b1": new Quest("A Path Less Traveled", ["non-magic"], 
         {
             ":thumb719065940:": 5, // Milk
             ":thumb740288322:": 2, // Pearl Necklace
@@ -51,7 +65,7 @@ const quests = {
             ":thumb753647382:": 2  // Inkwell
         }
     ),
-    "b2": new Quest("Counting Sheep", ["none"], 
+    "b2": new Quest("Counting Sheep", ["non-magic"], 
         {
             "100 x :thumb726629426:": 10, // 100 Crystals
             ":thumb718012647:": 1, // Diminished Coin
@@ -60,7 +74,7 @@ const quests = {
             ":thumb741645024:": 2  // Leather
         }
     ),
-    "b3": new Quest("A Festival of Honor", ["none"], 
+    "b3": new Quest("A Festival of Honor", ["non-magic"], 
         {
             ":thumb745829466:": 1, // Revival Feather
             ":thumb743377529:": 2, // Dragon Roll Sushi
@@ -69,7 +83,7 @@ const quests = {
             ":thumb743377712:": 5  // Water
         }
     ),
-    "b4": new Quest("New Discoveries", ["none"], 
+    "b4": new Quest("New Discoveries", ["non-magic"], 
         {
             "100 x :thumb726629426:": 10, // 100 Crystals
             ":thumb730043272:": 2, // Emerald
@@ -78,7 +92,7 @@ const quests = {
             ":thumb743369403:": 5  // Magic Reversal Charm
         }
     ),
-    "b5": new Quest("Tanning the Hide", ["none"], 
+    "b5": new Quest("Tanning the Hide", ["non-magic"], 
         {
             ":thumb741645024:": 5, // Leather
             ":thumb745255167:": 5, // Spotted Deer Pelt
@@ -90,7 +104,7 @@ const quests = {
             ":thumb740288113:": 5  // Wolf Pelt
         }
     ),
-    "b6": new Quest("Show Me Your Bug Collection", ["none"], 
+    "b6": new Quest("Show Me Your Bug Collection", ["non-magic"], 
         {
             "diamond_insect": 2, // Needs a special case to roll one out of the six varieties, only a single variety can be dropped per quest
             ":thumb735459915:": 3, // Elder Beetle
@@ -131,7 +145,7 @@ const quests = {
             ":thumb719445773:": 1  // Common Dragon Egg
         }
     ),
-    "i4": new Quest("The Cutest Critter You Ever Did See", ["none"], 
+    "i4": new Quest("The Cutest Critter You Ever Did See", ["non-magic"], 
         {
             ":thumb737893705:": 1, // Albino Otter
             ":thumb737893718:": 1, // River Otter
@@ -247,13 +261,13 @@ const quests = {
 
 var quest;
 var rank;
-var temper; // -5% for timid, +5% for aggressive
-var magic_level; // +5% for low, +10% for high (but what about basic?)
+var temper; // -5% for timid, +5% for aggressive (to injury chance)
+var magic_level; // +5% for low, +10% for high (but what about basic?) (to pass chance)
 var magic_type;
-// If there are items and familiars added in the future, add a new var for each?
-var taming; // specifically domesticated taming; +5%
-var has_bonded; // or same flight; overwrites has_other_dragon; +10%
-var has_other_dragon; // +5%
+var has_bonded; // or same flight; overwrites has_other_dragon; +10% (to pass chance)
+var has_other_dragon; // +5% (to pass chance)
+
+var extras; // Array of strings, if input was true, add id to this array, later used to get value from index
 
 // Updates inputs for next roll
 function readInputs() {
@@ -262,9 +276,15 @@ function readInputs() {
     temper = document.getElementById("temper").value;
     magic_level = document.getElementById("magic_level").value;
     magic_type = document.getElementById("magic_type").value;
-    taming = document.getElementById("taming").value;
-    has_other_dragon = document.getElementById("other_dragon").value;
-    has_bonded = document.getElementById("bonded").value;
+    has_bonded = document.getElementById("bonded").checked;
+    has_other_dragon = document.getElementById("other_dragon").checked;
+
+    // Get extras
+    extras = []
+    extras_inputs = document.getElementsByName("extras");
+    for(let i = 0; i < extras_inputs.length; i++) {
+        if (extras_inputs[i].checked) { extras.push(extras_inputs[i].value); }
+    }
 }
 
 function rollQuest() {
@@ -273,6 +293,20 @@ function rollQuest() {
     //    - If fail, rollSide()
     //    - If pass, rollLoot()
     // 3. rollInjury()
+    console.log(extras)
+    console.log(document.getElementsByName("extras"))
+    var quest_data = quests[quest];
+    var pass_chance = base_pass[rank];
+    pass_chance += magic_level_pass[magic_level];
+    if(quest_data.quest_types.includes(magic_type)) { pass_chance += 5; }
+    console.log(pass_chance)
+    if(has_bonded) { pass_chance += 10; }
+    else if(has_other_dragon) { pass_chance += 5; }
+    console.log(pass_chance)
+    for(let i = 0; i < extras.length; i++) {
+        pass_chance += extra_pass[extras[i]];
+    }
+    console.log(pass_chance)
 }
 
 function rollSide() {
@@ -289,7 +323,8 @@ function rollInjury() {
 }
 
 function roll() {
-    readInputs()
+    readInputs();
+    rollQuest();
 }
 
 // Roll a result from a provided object of values
