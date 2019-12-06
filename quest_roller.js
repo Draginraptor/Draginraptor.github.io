@@ -38,6 +38,12 @@ const base_injury = {
     "primordial": 10
 }
 
+const temper_injury = {
+    "na": 0,
+    "timid": -5,
+    "aggressive": 5
+}
+
 class Quest {
     constructor(name, quest_types, loot_table) {
         this.name = name
@@ -259,6 +265,50 @@ const quests = {
     )
 }
 
+const side_quests = [
+    "<b>A bizarre after taste...</b><br>\
+    A rather rugged and wise woman approaches you, she has a need for some strange ingredients. \
+    When you ask what it is for, she doesn't really give you direct reply about it, \
+    it's vague and you wonder if it's a medicine. In return for your efforts, \
+    she offers the chance of either <b>250 Crystals</b> or a <b>Diminished Coin</b>. \
+    If you choose to help her, depict your dragon searching for the plant-based \
+    ingredients for her strange request.<br>",
+    "<b>Gone Fishing</b><br><br>\
+    On your travels for your quest you meet up with a fisherman, he seems distressed. You ask \
+    him what is bothering him and he replies with a rather long winded story about his \
+    favorite fishing spot, but he can't go because he lost his fishing pole. He asks you \
+    to find it, but when he describes it it just sounds like something you could make for him. \
+    As a reward he offers his meager savings of either the chance at a <b>150 Crystals</b> \
+    or a <b>Diminished Coin</b>. If you choose to help him, depict your dragon either looking for, \
+    finding, or just making a new fishing pole for the fisherman.<br>",
+    "<b>Waste of a Royal</b><br><br>\
+    You've wandered for hours, but finally you come to something interesting. \
+    Brushing past the foliage and trees you enter a clearing, but not all is well. \
+    A gut wrenching sight of a massive dragon lay wounded. Its breath rugged and shambling \
+    as its life seeps away from it. You question how long it had been here, but can tell \
+    that the white dragon adorned with golden horns doesn't have too much time. It speaks \
+    to you in the dragon tongue, explaining its story of the fight against a dangerous force. \
+    It asks of you to send word of its defeat to a loved one who wanders the desert, \
+    eternally waiting for its beloved to return. Described as a black dragon whose eyes \
+    bleed crimson. The white dragon tells you that you will receive payment from them for your \
+    troubles, either <b>500 Crystals</b> or a <b>Weathered Coin</b>. If you choose to help a dying \
+    dragon's wishes, depict your dragon either meeting the blackened lover or on their way through \
+    desert to them.<br><br>"
+];
+
+const injuries = {
+    "Your dragon got a scratch while questing!": 85,
+    "Your dragon feels a little bit sick... \
+    Their health will be reduced by 2 points for \
+    every quest they embark on until they get an antidote!": 10,
+    "Your dragon feels terribly ill... \
+    Their health will be reduced by 4 points for \
+    every quest they embark on until they get an antidote!": 3,
+    "Your dragon has been hit by heat stroke! They cannot go questing until \
+    given milk or water!": 1,
+    "Your dragon was attacked by a wild dragon while questing!": 1
+}
+
 var quest;
 var rank;
 var temper; // -5% for timid, +5% for aggressive (to injury chance)
@@ -266,6 +316,7 @@ var magic_level; // +5% for low, +10% for high (but what about basic?) (to pass 
 var magic_type;
 var has_bonded; // or same flight; overwrites has_other_dragon; +10% (to pass chance)
 var has_other_dragon; // +5% (to pass chance)
+var is_hoarder; // Chance to return with one more item
 
 var extras; // Array of strings, if input was true, add id to this array, later used to get value from index
 
@@ -278,6 +329,7 @@ function readInputs() {
     magic_type = document.getElementById("magic_type").value;
     has_bonded = document.getElementById("bonded").checked;
     has_other_dragon = document.getElementById("other_dragon").checked;
+    is_hoarder = document.getElementById("hoarder").checked;
 
     // Get extras
     extras = []
@@ -307,25 +359,87 @@ function rollQuest() {
         pass_chance += extra_pass[extras[i]];
     }
     console.log(pass_chance)
-}
 
-function rollSide() {
+    var result = "";
+    var pass_roll = rand(1, 100);
+    // If roll is less than pass chance, it is a success
+    if(pass_roll < pass_chance) { result += rollLoot(); }
+    else { result += rollSide(); }
 
-}
+    result += "<br><br>";
 
-function rollLoot(){
-    // Roll amount of loot, then roll a loot for each
+    result += rollInjury();
+    if(pass_roll < pass_chance) { result += "<br>Items have been deposited to hoard."; }
+
+    document.getElementById("result").innerHTML = result;
+
+    function rollLoot(){
+        // Roll amount of loot
+        var max_loot = 3;
+        if(is_hoarder) { max_loot += 1; }
+        var num_loot = rand(1, max_loot);
+    
+        var loot_result = "[dragon name] has succeeded in their quest! They found:<br><br>"
+    
+        for(let i = 0; i < num_loot; i++){
+            loot_result += getRollResult(quest_data.loot_table);
+        }
+
+        return loot_result;
+    }
+    
+    function rollSide() {
+        var side_result = "Your dragon failed the quest, however you have found an <i>optional side quest</i>. \
+        Only [dragon name] may complete this quest chain.<br><br>"
+        var rand_index = rand(0, side_quests.length-1);
+        side_result += side_quests[rand_index];
+        side_result += "To submit your side quest, please reply to the questing journal for the season \
+        with the following form:<br><br>\
+        <b>Link to Dragon:</b> [link your dragon's import]<br>\
+        <b>Link to Entry:</b> [Link the image with the entry!]<br>\
+        <b>Side Quest Title:</b> [what is the title?]<br>\
+        <b>Link to Side Quest Proof:</b> (This comment!)<br><br>\
+        Side quests cannot be failed, you are guaranteed one of the two rewards."
+
+        return side_result;
+    }
 }
 
 function rollInjury() {
-    // Get injury chance based on rank and temper (possibly from extras as well
+    // Get injury chance based on rank and temper (possibly from extras as well)
+    var injury_chance = base_injury[rank];
+    injury_chance += temper_injury[temper];
+
     // Roll injury
+    var injury_result;
+    var injury_roll = rand(1, 100);
+    // If roll is less than chance, dragon is injured
+    if(injury_roll < injury_chance) {
+        injury_result = getRollResult(injuries);
+        if(injury_result == "Your dragon got a scratch while questing!") { 
+            injury_result += " -" + rand(2, 10) + "HP";
+        }
+        if(injury_result == "Your dragon was attacked by a wild dragon while questing!") { 
+            injury_result += " -" + rand(1, 30) + "HP";
+        }
+    }
+    else {
+        injury_result = "Your dragon was not injured."
+    }
+
+    return injury_result;
 }
 
 function roll() {
     readInputs();
     rollQuest();
 }
+
+function rand(min, max) {
+    var min = min || 0,
+        max = max || Number.MAX_SAFE_INTEGER;
+
+    return Math.floor(Math.random() * (max - min + 1)) + min;}
 
 // Roll a result from a provided object of values
 function getRollResult(roll_table) {
