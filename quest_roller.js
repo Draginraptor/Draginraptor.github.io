@@ -272,16 +272,16 @@ const side_quests = [
     it's vague and you wonder if it's a medicine. In return for your efforts, \
     she offers the chance of either <b>250 Crystals</b> or a <b>Diminished Coin</b>. \
     If you choose to help her, depict your dragon searching for the plant-based \
-    ingredients for her strange request.<br>",
-    "<b>Gone Fishing</b><br><br>\
+    ingredients for her strange request.<br><br>",
+    "<b>Gone Fishing</b><br>\
     On your travels for your quest you meet up with a fisherman, he seems distressed. You ask \
     him what is bothering him and he replies with a rather long winded story about his \
     favorite fishing spot, but he can't go because he lost his fishing pole. He asks you \
     to find it, but when he describes it it just sounds like something you could make for him. \
     As a reward he offers his meager savings of either the chance at a <b>150 Crystals</b> \
     or a <b>Diminished Coin</b>. If you choose to help him, depict your dragon either looking for, \
-    finding, or just making a new fishing pole for the fisherman.<br>",
-    "<b>Waste of a Royal</b><br><br>\
+    finding, or just making a new fishing pole for the fisherman.<br><br>",
+    "<b>Waste of a Royal</b><br>\
     You've wandered for hours, but finally you come to something interesting. \
     Brushing past the foliage and trees you enter a clearing, but not all is well. \
     A gut wrenching sight of a massive dragon lay wounded. Its breath rugged and shambling \
