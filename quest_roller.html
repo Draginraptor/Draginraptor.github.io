@@ -87,6 +87,69 @@
         <hr>
         <button class="button" onclick=roll()>Roll Quest</button>
         <p id="result" style="border: 2px solid black;"></p>
+
+        <br>
+        <p>How it rolls:</p>
+        <ol>
+            <li>Gets from html:
+                <ul>
+                    <li>Quest</li>
+                    <li>Rank</li>
+                    <li>Temper</li>
+                    <li>Magic Level and Type</li>
+                    <li>Presence of bonded or other dragon</li>
+                    <li>Presence of hoarder skill</li>
+                    <li>Collects all other possible bonuses (such as from items, familiars or taming)</li>
+                </ul>
+            </li>
+            <li>Gets quest data from the dictionary of quests</li>
+            <li>Gets the base quest pass chance corresponding to the dragon's rank</li>
+            <li>Increase pass chance according to magic level</li>
+            <li>If the dragon's magic type matches the quest, increase the pass chance by 5%</li>
+            <li>If the image contains a bonded dragon or companion, increase the pass chance by 10%
+                <ul>
+                    <li>If the above check fails, check if the image contains any other dragon, and increase the pass chance by 5% if so</li>
+                </ul>
+            </li>
+            <li>Go through all the extras that have been added and increase the pass chance accordingly</li>
+            <li>Final pass chance had been calculated by this point, can be greater than 100</li>
+            <li>Roll a number between 1 - 100 to check if the dragon passes or fails the quest
+                <ul>
+                    <li>It is considered pass if the number rolled is less than the final pass chance (i.e. if final pass chance is 100 or more, pass is guaranteed)</li>
+                </ul>
+            </li>
+            <li>If pass, roll loot
+                <ol type="i">
+                    <li>Set base max loot to 3, adding 1 if the dragon has the Hoarder skill</li>
+                    <li>Get a random number of loot to roll</li>
+                    <li>Roll corresponding number of loots and add to the results string</li>
+                </ol>
+            </li>
+            <li>If fail, roll side quest
+                <ol type="i">
+                    <li>Add side quest flavour text</li>
+                    <li>Randomise side quest to attack</li>
+                    <li>Add side quest submission form</li>
+                    <li>Add all to results string</li>
+                </ol>
+            </li>
+            <li>Regardless, roll for injury
+                <ol type="i">
+                    <li>Get base injury chance based on dragon rank</li>
+                    <li>Increase/decrease base injury chance based on dragon's temper</li>
+                    <li>Roll to see if dragon gets injured, similar to how quest pass is rolled</li>
+                    <li>If pass, roll random injury
+                        <ol type="a">
+                            <li>Roll random injury based on the injury chance table</li>
+                            <li>If its a special case, such as scratches and wild dragon attacks, randomise a damage value</li>
+                        </ol>
+                    </li>
+                    <li>If fail, just state that dragon is not injured
+                </ol>
+            </li>
+            <li>Add injury results to final results</li>
+            <li>Print results</li>
+        </ol>
     </body>
 
     <script src = "./quest_roller.js"></script>

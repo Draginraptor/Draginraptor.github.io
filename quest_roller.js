@@ -265,6 +265,7 @@ const quests = {
     )
 }
 
+// List of strings
 const side_quests = [
     "<b>A bizarre after taste...</b><br>\
     A rather rugged and wise woman approaches you, she has a need for some strange ingredients. \
@@ -273,6 +274,7 @@ const side_quests = [
     she offers the chance of either <b>250 Crystals</b> or a <b>Diminished Coin</b>. \
     If you choose to help her, depict your dragon searching for the plant-based \
     ingredients for her strange request.<br><br>",
+    
     "<b>Gone Fishing</b><br>\
     On your travels for your quest you meet up with a fisherman, he seems distressed. You ask \
     him what is bothering him and he replies with a rather long winded story about his \
@@ -281,6 +283,7 @@ const side_quests = [
     As a reward he offers his meager savings of either the chance at a <b>150 Crystals</b> \
     or a <b>Diminished Coin</b>. If you choose to help him, depict your dragon either looking for, \
     finding, or just making a new fishing pole for the fisherman.<br><br>",
+    
     "<b>Waste of a Royal</b><br>\
     You've wandered for hours, but finally you come to something interesting. \
     Brushing past the foliage and trees you enter a clearing, but not all is well. \
@@ -296,6 +299,7 @@ const side_quests = [
     desert to them.<br><br>"
 ];
 
+// Structure: <full_sentence>: <chance>
 const injuries = {
     "Your dragon got a scratch while questing!": 85,
     "Your dragon feels a little bit sick... \
@@ -319,6 +323,11 @@ var has_other_dragon; // +5% (to pass chance)
 var is_hoarder; // Chance to return with one more item
 
 var extras; // Array of strings, if input was true, add id to this array, later used to get value from index
+
+function roll() {
+    readInputs();
+    rollQuest();
+}
 
 // Updates inputs for next roll
 function readInputs() {
@@ -345,20 +354,15 @@ function rollQuest() {
     //    - If fail, rollSide()
     //    - If pass, rollLoot()
     // 3. rollInjury()
-    console.log(extras)
-    console.log(document.getElementsByName("extras"))
     var quest_data = quests[quest];
     var pass_chance = base_pass[rank];
     pass_chance += magic_level_pass[magic_level];
     if(quest_data.quest_types.includes(magic_type)) { pass_chance += 5; }
-    console.log(pass_chance)
     if(has_bonded) { pass_chance += 10; }
     else if(has_other_dragon) { pass_chance += 5; }
-    console.log(pass_chance)
     for(let i = 0; i < extras.length; i++) {
         pass_chance += extra_pass[extras[i]];
     }
-    console.log(pass_chance)
 
     var result = "";
     var pass_roll = rand(1, 100);
@@ -428,11 +432,6 @@ function rollInjury() {
     }
 
     return injury_result;
-}
-
-function roll() {
-    readInputs();
-    rollQuest();
 }
 
 function rand(min, max) {
