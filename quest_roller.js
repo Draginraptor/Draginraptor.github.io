@@ -27,8 +27,7 @@ const magic_level_pass = {
 // Pass rate boosts based on items, familiars, or taming
 const extra_pass = {
     "domes_taming": 5,
-    "test1": 5,
-    "test2": 5
+    "scoria_komodo": 5
 }
 
 const base_injury = {
