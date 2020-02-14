@@ -312,6 +312,7 @@ const injuries = {
     "Your dragon was attacked by a wild dragon while questing!": 1
 }
 
+var import_link;
 var quest;
 var rank;
 var temper; // -5% for timid, +5% for aggressive (to injury chance)
@@ -330,6 +331,7 @@ function roll() {
 
 // Updates inputs for next roll
 function readInputs() {
+    import_link = document.getElementById("link").value;
     quest = document.getElementById("quest").value;
     rank = document.getElementById("rank").value;
     temper = document.getElementById("temper").value;
@@ -345,6 +347,24 @@ function readInputs() {
     for(let i = 0; i < extras_inputs.length; i++) {
         if (extras_inputs[i].checked) { extras.push(extras_inputs[i].value); }
     }
+}
+
+function getDragonName() {
+    var x = import_link.split('/');
+	var y = x[5].split('-');
+    var name = "";
+    // Regular expression matching digit only strings to stop at the dragon id
+    var num_only = new RegExp("^\\d+$");
+    var char_num = new RegExp("[a-zA-Z]{1}\\d");
+    for(let i = 0; i < y.length; i++) {
+        name += y[i];
+        // If id parsed, stop
+        if(num_only.test(y[i]) || char_num.test(y[i])) {
+            break;
+        }
+        name += " ";
+    }
+    return "<a href='" + import_link + "'>" + name + "</a>";
 }
 
 function rollQuest() {
@@ -382,7 +402,7 @@ function rollQuest() {
         if(is_hoarder) { max_loot += 1; }
         var num_loot = rand(1, max_loot);
     
-        var loot_result = "[dragon name] has succeeded in their quest! They found:<br><br>"
+        var loot_result = getDragonName() + " has succeeded in their quest! They found:<br><br>"
     
         for(let i = 0; i < num_loot; i++){
             loot_result += getRollResult(quest_data.loot_table);
@@ -392,8 +412,9 @@ function rollQuest() {
     }
     
     function rollSide() {
+        console.log(getDragonName())
         var side_result = "Your dragon failed the quest, however you have found an <i>optional side quest</i>. \
-        Only [dragon name] may complete this quest chain.<br><br>"
+        Only " + getDragonName() + " may complete this quest chain.<br><br>"
         var rand_index = rand(0, side_quests.length-1);
         side_result += side_quests[rand_index];
         side_result += "To submit your side quest, please reply to the questing journal for the season \
