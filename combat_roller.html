@@ -1,0 +1,161 @@
+<!doctype html>
+<head>
+    <title>(Test) Combat Roller</title>
+</head>
+<html lang="en">
+    <body>
+        <a href="index.html">Back to navigation</a>
+        <br>
+        <br>
+        <h3>Dragon 1</h5>
+        <label for="1_link">Import Link:</label>
+        <input type="text" id="1_link">
+        <label for="1_health">Health:</label>
+        <input type="number" id="1_health" name="health" min="1">
+        <br>
+        <label for="1_class">Class:</label>
+        <select id="1_class">
+            <option value="very_light">Very Light</option>
+            <option value="light">Light</option>
+            <option value="medium">Medium</option>
+            <option value="heavy">Heavy</option>
+            <option value="miniboss">Miniboss</option>
+            <option value="boss">Boss</option>
+        </select>
+        <br>
+        <label for="1_breath_1">Breath 1:</label>
+        <select id="1_breath_1">
+            <option value="none">None</option>
+            <option value="fire">Fire</option>
+            <option value="ice">Ice</option>
+            <option value="wind">Wind</option>
+            <option value="shadow">Shadow</option>
+            <option value="lightning">Lightning</option>
+            <option value="radiation">Radiation</option>
+            <option value="poison">Poison</option>
+        </select>
+        <label for="1_breath_2">Breath 2:</label>
+        <select id="1_breath_2">
+            <option value="none">None</option>
+            <option value="fire">Fire</option>
+            <option value="ice">Ice</option>
+            <option value="wind">Wind</option>
+            <option value="shadow">Shadow</option>
+            <option value="lightning">Lightning</option>
+            <option value="radiation">Radiation</option>
+            <option value="poison">Poison</option>
+        </select>
+        <br>
+        <label for="1_magic">Magic Level:</label>
+        <select id="1_magic">
+            <option value="none">None</option>
+            <option value="basic">Basic</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+        </select>
+        <br>
+        <label>Armor:</label>
+        <select id="1_helm">
+            <option value="none">None</option>
+            <option value="leather">Leather</option>
+            <option value="sturdy">Sturdy</option>
+            <option value="iron">Iron</option>
+            <option value="crystalline">Crystalline</option>
+            <option value="aether">Aether</option>
+        </select>
+        <select id="1_chest">
+            <option value="none">None</option>
+            <option value="leather">Leather</option>
+            <option value="sturdy">Sturdy</option>
+            <option value="iron">Iron</option>
+            <option value="crystalline">Crystalline</option>
+            <option value="aether">Aether</option>
+        </select>
+        <select id="1_tail">
+            <option value="none">None</option>
+            <option value="leather">Leather</option>
+            <option value="sturdy">Sturdy</option>
+            <option value="iron">Iron</option>
+            <option value="crystalline">Crystalline</option>
+            <option value="aether">Aether</option>
+        </select>
+        <br><h3>Dragon 2</h5>
+            <label for="2_link">Import Link:</label>
+            <input type="text" id="2_link">
+            <label for="2_health">Health:</label>
+            <input type="number" id="2_health" name="health" min="1">
+            <br>
+            <label for="2_class">Class:</label>
+            <select id="2_class">
+                <option value="very_light">Very Light</option>
+                <option value="light">Light</option>
+                <option value="medium">Medium</option>
+                <option value="heavy">Heavy</option>
+                <option value="miniboss">Miniboss</option>
+                <option value="boss">Boss</option>
+            </select>
+            <br>
+            <label for="2_breath_1">Breath 1:</label>
+            <select id="2_breath_1">
+                <option value="none">None</option>
+                <option value="fire">Fire</option>
+                <option value="ice">Ice</option>
+                <option value="wind">Wind</option>
+                <option value="shadow">Shadow</option>
+                <option value="lightning">Lightning</option>
+                <option value="radiation">Radiation</option>
+                <option value="poison">Poison</option>
+            </select>
+            <label for="2_breath_2">Breath 2:</label>
+            <select id="2_breath_2">
+                <option value="none">None</option>
+                <option value="fire">Fire</option>
+                <option value="ice">Ice</option>
+                <option value="wind">Wind</option>
+                <option value="shadow">Shadow</option>
+                <option value="lightning">Lightning</option>
+                <option value="radiation">Radiation</option>
+                <option value="poison">Poison</option>
+            </select>
+            <br>
+            <label for="2_magic">Magic Level:</label>
+            <select id="2_magic">
+                <option value="none">None</option>
+                <option value="low">Low</option>
+                <option value="high">High</option>
+            </select>
+            <br>
+            <label>Armor:</label>
+            <select id="2_helm">
+                <option value="none">None</option>
+                <option value="leather">Leather</option>
+                <option value="sturdy">Sturdy</option>
+                <option value="iron">Iron</option>
+                <option value="crystalline">Crystalline</option>
+                <option value="aether">Aether</option>
+            </select>
+            <select id="2_chest">
+                <option value="none">None</option>
+                <option value="leather">Leather</option>
+                <option value="sturdy">Sturdy</option>
+                <option value="iron">Iron</option>
+                <option value="crystalline">Crystalline</option>
+                <option value="aether">Aether</option>
+            </select>
+            <select id="2_tail">
+                <option value="none">None</option>
+                <option value="leather">Leather</option>
+                <option value="sturdy">Sturdy</option>
+                <option value="iron">Iron</option>
+                <option value="crystalline">Crystalline</option>
+                <option value="aether">Aether</option>
+            </select>
+            <br>
+            <br>
+        <button class="button" onclick=roll()>Roll Combat</button>
+        <p id="result" style="border: 2px solid black;"></p>
+        <br>
+    </body>
+
+    <script src = "./combat_roller.js"></script>
+</html>
