@@ -1,6 +1,4 @@
 // Data
-// TODO: magic classes and the min/max dmg; breaths, their weaknesses, general dmg, vs weak dmg, crit chance;
-// add the rest of the classes (light, medium etc); add remaining armor values and their break chance
 
 // dps is number of times a dragon gets to roll their raw/bleed, keyed as follows:
 // [attack_no.]:[value to roll under or equal to get that extra attack]
@@ -18,8 +16,72 @@ const classes = {
 		max_dps: 3,
 		base_res: 30,
 		mag_crit: 5
-	}
+	},
+	'light': {
+		phys_crit: 3, // out of 10
+		min_raw: 25,
+		max_raw: 50,
+		max_bleed: 40, // min is always 1
+		max_dps: 3,
+		base_res: 30,
+		mag_crit: 3
+	},
+	'medium': {
+		phys_crit: 4, // out of 10
+		min_raw: 50,
+		max_raw: 120,
+		max_bleed: 30, // min is always 1
+		max_dps: 2,
+		base_res: 40,
+		mag_crit: 4
+	},
+	'heavy': {
+		phys_crit: 2, // out of 10
+		min_raw: 50,
+		max_raw: 135,
+		max_bleed: 40, // min is always 1
+		max_dps: 2,
+		base_res: 35,
+		mag_crit: 4
+	},
+	'very_heavy': {
+		phys_crit: 1, // out of 10
+		min_raw: 50,
+		max_raw: 150,
+		max_bleed: 20, // min is always 1
+		max_dps: 2,
+		base_res: 50,
+		mag_crit: 2
+	},
 };
+
+const breath_weaknesses = {
+	'fire': 'water', // i.e. fire is weak to water
+	'water': 'lightning',
+	'wind': 'poison',
+	'shadow': 'radiation',
+	'poison': 'fire',
+	'radiation': 'luster',
+	'luster': 'shadow',
+	'lightning': 'wind'
+};
+
+const breath_tier_dmgs = { 1: 10, 2: 20, 3: 30, 4: 40 };
+
+const magic_classes = {
+	'basic': {
+		min_dmg: 15,
+		max_dmg: 30
+	},
+	'low': {
+		min_dmg: 20,
+		max_dmg: 60
+	},
+	'high': {
+		min_dmg: 35,
+		max_dmg: 100
+	}
+}
 
 const armor_sets = {
 	'leather': {
@@ -27,7 +89,33 @@ const armor_sets = {
 		chest: 10,
 		tail: 10,
 		break_chance: 5
-	}
+	},
+	'sturdy': {
+		helm: 20,
+		chest: 20,
+		tail: 20,
+		break_chance: 3
+	},
+	'iron': {
+		helm: 25,
+		chest: 25,
+		tail: 25,
+		break_chance: 1
+	},
+	'crystalline': {
+		helm: 30,
+		chest: 30,
+		tail: 30,
+		break_chance: 0,
+		bleed_res: 0 // temp
+	},
+	'aether': {
+		helm: 30,
+		chest: 30,
+		tail: 30,
+		break_chance: 0,
+		magic_res: 0 // temp
+	},
 }
 
 // Inputs are retrieved in the setupDragons function
@@ -43,7 +131,8 @@ function rand(min, max) {
 var dragon_1 = {
 	health: 0,
 	stats: {}, // filled with the stats of the corresponding class
-	breath: [], // array of up to 2 strings
+	breath_type: [], // array of up to 2 strings, order: breath_1 then breath_2
+	breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
 	magic: {}, // should have 2 children: min and max (damage)
 	armor: {
 		helm: '???', // should be leather, sturdy, leather etc; used for rolling destruction
@@ -56,7 +145,8 @@ var dragon_1 = {
 var dragon_2 = {
 	health: 0,
 	stats: {}, // filled with the stats of the corresponding class
-	breath: [], // array of up to 2 strings
+	breath_type: [], // array of up to 2 strings, order: breath_1 then breath_2
+	breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
 	magic: {}, // should have 2 children: min and max (damage)
 	armor: {
 		helm: '???',
@@ -142,6 +232,8 @@ function calculateDamage(attacker, defender) {
 
 	// TODO:
 	// Do armor check, reduce raw_dmg as necessary
+	var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
+	raw_dmg -= roll_armor_deflect;
 
 	// Do armor destruction check
 
