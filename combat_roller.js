@@ -88,38 +88,45 @@ const armor_sets = {
 		helm: 10,
 		chest: 10,
 		tail: 10,
-		break_chance: 5
+		break_chance: 5,
+		bleed_res: 0,
+		magic_res: 0
 	},
 	'sturdy': {
 		helm: 20,
 		chest: 20,
 		tail: 20,
-		break_chance: 3
+		break_chance: 3,
+		bleed_res: 0,
+		magic_res: 0
 	},
 	'iron': {
 		helm: 25,
 		chest: 25,
 		tail: 25,
-		break_chance: 1
+		break_chance: 1,
+		bleed_res: 0,
+		magic_res: 0
 	},
 	'crystalline': {
 		helm: 30,
 		chest: 30,
 		tail: 30,
 		break_chance: 0,
-		bleed_res: 0 // temp
+		bleed_res: 0,
+		magic_res: 0
 	},
 	'aether': {
 		helm: 30,
 		chest: 30,
 		tail: 30,
 		break_chance: 0,
-		magic_res: 0 // temp
+		bleed_res:0,
+		magic_res: 0
 	},
 }
 
 // Inputs are retrieved in the setupDragons function
-// TODO: Add in the retrieval html inputs here
 
 function rand(min, max) {
     var min = min || 0,
@@ -128,33 +135,9 @@ function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-var dragon_1 = {
-	health: 0,
-	stats: {}, // filled with the stats of the corresponding class
-	breath_type: [], // array of up to 2 strings, order: breath_1 then breath_2
-	breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
-	magic: {}, // should have 2 children: min and max (damage)
-	armor: {
-		helm: '???', // should be leather, sturdy, leather etc; used for rolling destruction
-		chest: '???',
-		tail: '???',
-		total_rating: 0 // calculated and set during initial setup; used for rolling dmg reduction
-	}
-}
+var dragon_1;
 
-var dragon_2 = {
-	health: 0,
-	stats: {}, // filled with the stats of the corresponding class
-	breath_type: [], // array of up to 2 strings, order: breath_1 then breath_2
-	breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
-	magic: {}, // should have 2 children: min and max (damage)
-	armor: {
-		helm: '???',
-		chest: '???',
-		tail: '???',
-		total_rating: 0
-	}
-}
+var dragon_2;
 
 function fight() {
 	// Assign the needed data to the dragon vars
@@ -184,7 +167,119 @@ function fight() {
 
 // Function to load all the data on both dragons into a dictionary for ease of access when rolling
 function setupDragons() {
+	// Reset dragons
+	dragon_1 = {
+		link: '???',
+		health: 0,
+		stats: {}, // filled with the stats of the corresponding class
+		breath_types: [], // array of up to 2 strings, order: breath_1 then breath_2
+		breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
+		magic: {}, // should have 2 children: min and max (damage)
+		armor: {
+			helm: '???',
+			chest: '???',
+			tail: '???',
+			total_rating: 0,
+			bleed_res: 0,
+			magic_res: 0
+		}
+	}
 	
+	dragon_2 = {
+		link: '???',
+		health: 0,
+		stats: {}, // filled with the stats of the corresponding class
+		breath_types: [], // array of up to 2 strings, order: breath_1 then breath_2
+		breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
+		magic: {}, // should have 2 children: min and max (damage)
+		armor: {
+			helm: '???',
+			chest: '???',
+			tail: '???',
+			total_rating: 0,
+			bleed_res: 0,
+			magic_res: 0
+		}
+	}
+
+	// Setup dragon_1
+	dragon_1.link = document.getElementById('1_link').value;
+	dragon_1.health = parseInt(document.getElementById('1_health').value);
+	Object.assign(dragon_1.stats, classes[document.getElementById('1_class').value]);
+	if(document.getElementById('1_breath_type_1').value != 'none') {
+		dragon_1.breath_types.push(document.getElementById('1_breath_type_1').value);
+		dragon_1.breath_tiers.push(document.getElementById('1_breath_tier_1').value);
+	}
+	if(document.getElementById('1_breath_type_2').value != 'none') {
+		dragon_1.breath_types.push(document.getElementById('1_breath_type_2').value);
+		dragon_1.breath_tiers.push(document.getElementById('1_breath_tier_2').value);
+	}
+	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
+	// Dragon 1 Helm
+	dragon_1.armor.helm = document.getElementById('1_helm').value;
+	if(dragon_1.armor.helm != 'none') {
+		var helm_type_1 = armor_sets[dragon_1.armor.helm];
+		dragon_1.armor.total_rating += helm_type_1.helm;
+		dragon_1.armor.bleed_res += helm_type_1.bleed_res;
+		dragon_1.armor.magic_res += helm_type_1.magic_res;
+	}
+	// Dragon 1 Chest
+	dragon_1.armor.chest = document.getElementById('1_chest').value;
+	if(dragon_1.armor.chest != 'none') {
+		var chest_type_1 = armor_sets[dragon_1.armor.chest];
+		dragon_1.armor.total_rating += chest_type_1.chest;
+		dragon_1.armor.bleed_res += chest_type_1.bleed_res;
+		dragon_1.armor.magic_res += chest_type_1.magic_res;
+	}
+	// Dragon 1 Tail
+	dragon_1.armor.tail = document.getElementById('1_tail').value;
+	if(dragon_1.armor.tail != 'none') {
+		var tail_type_1 = armor_sets[dragon_1.armor.tail];
+		dragon_1.armor.total_rating += tail_type_1.tail;
+		dragon_1.armor.bleed_res += tail_type_1.bleed_res;
+		dragon_1.armor.magic_res += tail_type_1.magic_res;
+	}
+
+	// Setup dragon_2
+	dragon_2.link = document.getElementById('2_link').value;
+	dragon_2.health = parseInt(document.getElementById('2_health').value);
+	Object.assign(dragon_2.stats, classes[document.getElementById('2_class').value]);
+	if(document.getElementById('2_breath_type_1').value != 'none') {
+		dragon_2.breath_types.push(document.getElementById('2_breath_type_1').value);
+		dragon_2.breath_tiers.push(document.getElementById('2_breath_tier_1').value);
+	}
+	if(document.getElementById('2_breath_type_2').value != 'none') {
+		dragon_2.breath_types.push(document.getElementById('2_breath_type_2').value);
+		dragon_2.breath_tiers.push(document.getElementById('2_breath_tier_2').value);
+	}
+	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
+	// Dragon 2 Helm
+	dragon_2.armor.helm = document.getElementById('2_helm').value;
+	if(dragon_2.armor.helm != 'none') {
+		var helm_type_2 = armor_sets[dragon_2.armor.helm];
+		dragon_2.armor.total_rating += helm_type_2.helm;
+		dragon_2.armor.bleed_res += helm_type_2.bleed_res;
+		dragon_2.armor.magic_res += helm_type_2.magic_res;
+		}
+	// Dragon 2 Chest
+	dragon_2.armor.chest = document.getElementById('2_chest').value;
+	if(dragon_2.armor.chest != 'none') {
+		var chest_type_2 = armor_sets[dragon_2.armor.chest];
+		dragon_2.armor.total_rating += chest_type_2.chest;
+		dragon_2.armor.bleed_res += chest_type_2.bleed_res;
+		dragon_2.armor.magic_res += chest_type_2.magic_res;
+	}
+	// Dragon 2 Tail
+	dragon_2.armor.tail = document.getElementById('2_tail').value;
+	if(dragon_2.armor.tail != 'none') {
+		var tail_type_2 = armor_sets[dragon_2.armor.tail];
+		dragon_2.armor.total_rating += tail_type_2.tail;
+		dragon_2.armor.bleed_res += tail_type_2.bleed_res;
+		dragon_2.armor.magic_res += tail_type_2.magic_res;
+	}
+
+	console.log(dragon_1);
+	console.log(dragon_2);
 }
 
 function calculateDamage(attacker, defender) {
@@ -235,11 +330,24 @@ function calculateDamage(attacker, defender) {
 	var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
 	raw_dmg -= roll_armor_deflect;
 
-	// Do armor destruction check
-
 	// Roll magic dmg
+	var magic_dmg = 0;
+	if(attacker.magic.length > 0) { magic_dmg = rand(attacker.magic.min_dmg, attacker.magic.max_dmg); }
 
-	// Roll breath dmg - find out how breaths are selected, and figure out how to implement them
+	// Roll breath dmg, if a breath exists
+	if(attacker.breath_types.length > 0) {
+		// array of bool; follows the order of breath_types to store if the breath in that position has any advantage
+		var breath_advantage = []; 
+		if(defender.breath_types.length > 0) {
+			// Check for weaknesses
+			attacker.breath_types.forEach(element => {
+				// Check if 
+			});
+		}
+		else {
+
+		}
+	}
 	
 	// return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
 }
@@ -251,6 +359,24 @@ function roll() {
 
 function clearForms() {
 	document.getElementById("result").innerHTML = "";
+}
+
+function getDragonName(import_link) {
+    var x = import_link.split('/');
+	var y = x[5].split('-');
+    var name = "";
+    // Regular expression matching digit only strings to stop at the dragon id
+    var num_only = new RegExp("^\\d+$");
+    var char_num = new RegExp("[a-zA-Z]{1}\\d");
+    for(let i = 0; i < y.length; i++) {
+        name += y[i];
+        // If id parsed, stop
+        if(num_only.test(y[i]) || char_num.test(y[i])) {
+            break;
+        }
+        name += " ";
+    }
+    return "<a href='" + import_link + "'>" + name + "</a>";
 }
 
 // JavaScript Document

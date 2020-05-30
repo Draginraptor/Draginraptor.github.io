@@ -10,8 +10,9 @@
         <h3>Dragon 1</h5>
         <label for="1_link">Import Link:</label>
         <input type="text" id="1_link">
+        <br>
         <label for="1_health">Health:</label>
-        <input type="number" id="1_health" name="health" min="1">
+        <input type="number" id="1_health" min="1" value=1>
         <br>
         <label for="1_class">Class:</label>
         <select id="1_class">
@@ -23,8 +24,8 @@
             <option value="boss">Boss</option>
         </select>
         <br>
-        <label for="1_breath_1">Breath 1:</label>
-        <select id="1_breath_1">
+        <label for="1_breath_type_1">Breath 1:</label>
+        <select id="1_breath_type_1">
             <option value="none">None</option>
             <option value="fire">Fire</option>
             <option value="ice">Ice</option>
@@ -34,8 +35,16 @@
             <option value="radiation">Radiation</option>
             <option value="poison">Poison</option>
         </select>
-        <label for="1_breath_2">Breath 2:</label>
-        <select id="1_breath_2">
+        <label for="1_breath_tier_1">Tier:</label>
+        <select id="1_breath_tier_1">
+            <option value=1>1</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+        </select>
+        <br>
+        <label for="1_breath_type_2">Breath 2:</label>
+        <select id="1_breath_type_2">
             <option value="none">None</option>
             <option value="fire">Fire</option>
             <option value="ice">Ice</option>
@@ -44,6 +53,13 @@
             <option value="lightning">Lightning</option>
             <option value="radiation">Radiation</option>
             <option value="poison">Poison</option>
+        </select>
+        <label for="1_breath_tier_2">Tier:</label>
+        <select id="1_breath_tier_2">
+            <option value=1>1</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
         </select>
         <br>
         <label for="1_magic">Magic Level:</label>
@@ -57,33 +73,34 @@
         <label>Armor:</label>
         <select id="1_helm">
             <option value="none">None</option>
-            <option value="leather">Leather</option>
-            <option value="sturdy">Sturdy</option>
-            <option value="iron">Iron</option>
-            <option value="crystalline">Crystalline</option>
-            <option value="aether">Aether</option>
+            <option value="leather">Leather Helm</option>
+            <option value="sturdy">Sturdy Helm</option>
+            <option value="iron">Iron Helm</option>
+            <option value="crystalline">Crystalline Helm</option>
+            <option value="aether">Aether Helm</option>
         </select>
         <select id="1_chest">
             <option value="none">None</option>
-            <option value="leather">Leather</option>
-            <option value="sturdy">Sturdy</option>
-            <option value="iron">Iron</option>
-            <option value="crystalline">Crystalline</option>
-            <option value="aether">Aether</option>
+            <option value="leather">Leather Chestplate</option>
+            <option value="sturdy">Sturdy Chestplate</option>
+            <option value="iron">Iron Chestplate</option>
+            <option value="crystalline">Crystalline Chestplate</option>
+            <option value="aether">Aether Chestplate</option>
         </select>
         <select id="1_tail">
             <option value="none">None</option>
-            <option value="leather">Leather</option>
-            <option value="sturdy">Sturdy</option>
-            <option value="iron">Iron</option>
-            <option value="crystalline">Crystalline</option>
-            <option value="aether">Aether</option>
+            <option value="leather">Leather Tail Guard</option>
+            <option value="sturdy">Sturdy Tail Guard</option>
+            <option value="iron">Iron Tail Guard</option>
+            <option value="crystalline">Crystalline Tail Guard</option>
+            <option value="aether">Aether Tail Guard</option>
         </select>
         <br><h3>Dragon 2</h5>
             <label for="2_link">Import Link:</label>
             <input type="text" id="2_link">
+            <br>
             <label for="2_health">Health:</label>
-            <input type="number" id="2_health" name="health" min="1">
+            <input type="number" id="2_health" min="1" value=1>
             <br>
             <label for="2_class">Class:</label>
             <select id="2_class">
@@ -95,8 +112,8 @@
                 <option value="boss">Boss</option>
             </select>
             <br>
-            <label for="2_breath_1">Breath 1:</label>
-            <select id="2_breath_1">
+            <label for="2_breath_type_1">Breath 1:</label>
+            <select id="2_breath_type_1">
                 <option value="none">None</option>
                 <option value="fire">Fire</option>
                 <option value="ice">Ice</option>
@@ -106,8 +123,16 @@
                 <option value="radiation">Radiation</option>
                 <option value="poison">Poison</option>
             </select>
-            <label for="2_breath_2">Breath 2:</label>
-            <select id="2_breath_2">
+            <label for="2_breath_tier_1">Tier:</label>
+            <select id="2_breath_tier_1">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+            </select>
+            <br>
+            <label for="2_breath_type_2">Breath 2:</label>
+            <select id="2_breath_type_2">
                 <option value="none">None</option>
                 <option value="fire">Fire</option>
                 <option value="ice">Ice</option>
@@ -116,11 +141,19 @@
                 <option value="lightning">Lightning</option>
                 <option value="radiation">Radiation</option>
                 <option value="poison">Poison</option>
+            </select>
+            <label for="2_breath_tier_2">Tier:</label>
+            <select id="2_breath_tier_2">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
             </select>
             <br>
             <label for="2_magic">Magic Level:</label>
             <select id="2_magic">
                 <option value="none">None</option>
+                <option value="basic">Basic</option>
                 <option value="low">Low</option>
                 <option value="high">High</option>
             </select>
@@ -128,27 +161,27 @@
             <label>Armor:</label>
             <select id="2_helm">
                 <option value="none">None</option>
-                <option value="leather">Leather</option>
-                <option value="sturdy">Sturdy</option>
-                <option value="iron">Iron</option>
-                <option value="crystalline">Crystalline</option>
-                <option value="aether">Aether</option>
+                <option value="leather">Leather Helm</option>
+                <option value="sturdy">Sturdy Helm</option>
+                <option value="iron">Iron Helm</option>
+                <option value="crystalline">Crystalline Helm</option>
+                <option value="aether">Aether Helm</option>
             </select>
             <select id="2_chest">
                 <option value="none">None</option>
-                <option value="leather">Leather</option>
-                <option value="sturdy">Sturdy</option>
-                <option value="iron">Iron</option>
-                <option value="crystalline">Crystalline</option>
-                <option value="aether">Aether</option>
+                <option value="leather">Leather Chestplate</option>
+                <option value="sturdy">Sturdy Chestplate</option>
+                <option value="iron">Iron Chestplate</option>
+                <option value="crystalline">Crystalline Chestplate</option>
+                <option value="aether">Aether Chestplate</option>
             </select>
             <select id="2_tail">
                 <option value="none">None</option>
-                <option value="leather">Leather</option>
-                <option value="sturdy">Sturdy</option>
-                <option value="iron">Iron</option>
-                <option value="crystalline">Crystalline</option>
-                <option value="aether">Aether</option>
+                <option value="leather">Leather Tail Guard</option>
+                <option value="sturdy">Sturdy Tail Guard</option>
+                <option value="iron">Iron Tail Guard</option>
+                <option value="crystalline">Crystalline Tail Guard</option>
+                <option value="aether">Aether Tail Guard</option>
             </select>
             <br>
             <br>
