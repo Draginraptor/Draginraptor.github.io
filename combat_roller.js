@@ -325,14 +325,21 @@ function calculateDamage(attacker, defender) {
 	raw_dmg *= (1 - deflect_chance[roll_deflect]);
 	raw_dmg -= defender.stats.base_res;
 
-	// TODO:
 	// Do armor check, reduce raw_dmg as necessary
 	var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
 	raw_dmg -= roll_armor_deflect;
 
-	// Roll magic dmg
+	// Roll magic dmg, if present
 	var magic_dmg = 0;
-	if(attacker.magic.length > 0) { magic_dmg = rand(attacker.magic.min_dmg, attacker.magic.max_dmg); }
+	if(attacker.magic.length > 0) {
+		var roll_magic_crit = rand(1, 10);
+		if(roll_magic_crit <= attacker.stats.mag_crit) {
+			magic_dmg = attacker.magic.max_dmg;
+		}
+		else {
+			magic_dmg = rand(attacker.magic.min_dmg, attacker.magic.max_dmg);
+		}
+	}
 
 	// Roll breath dmg, if a breath exists
 	if(attacker.breath_types.length > 0) {
