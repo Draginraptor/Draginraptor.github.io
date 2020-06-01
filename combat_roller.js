@@ -68,6 +68,8 @@ const breath_weaknesses = {
 
 const breath_tier_dmgs = { 1: 10, 2: 20, 3: 30, 4: 40 };
 
+const breath_crit = 4; // blanket value for all
+
 const magic_classes = {
 	'basic': {
 		min_dmg: 15,
@@ -113,7 +115,7 @@ const armor_sets = {
 		chest: 30,
 		tail: 30,
 		break_chance: 0,
-		bleed_res: 0,
+		bleed_res: 10,
 		magic_res: 0
 	},
 	'aether': {
@@ -121,8 +123,8 @@ const armor_sets = {
 		chest: 30,
 		tail: 30,
 		break_chance: 0,
-		bleed_res:0,
-		magic_res: 0
+		bleed_res: 0,
+		magic_res: 10
 	},
 }
 
@@ -171,9 +173,8 @@ function setupDragons() {
 	dragon_1 = {
 		link: '???',
 		health: 0,
-		stats: {}, // filled with the stats of the corresponding class
-		breath_types: [], // array of up to 2 strings, order: breath_1 then breath_2
-		breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
+		stats: {},  // filled with the stats of the corresponding class
+		breaths: {}, // array of up to 2 objs
 		magic: {}, // should have 2 children: min and max (damage)
 		armor: {
 			helm: '???',
@@ -189,8 +190,7 @@ function setupDragons() {
 		link: '???',
 		health: 0,
 		stats: {}, // filled with the stats of the corresponding class
-		breath_types: [], // array of up to 2 strings, order: breath_1 then breath_2
-		breath_tiers: [], // array of up to 2 ints, order: breath_1 then breath_2
+		breaths: {}, // array of up to 2 objs
 		magic: {}, // should have 2 children: min and max (damage)
 		armor: {
 			helm: '???',
@@ -206,13 +206,17 @@ function setupDragons() {
 	dragon_1.link = document.getElementById('1_link').value;
 	dragon_1.health = parseInt(document.getElementById('1_health').value);
 	Object.assign(dragon_1.stats, classes[document.getElementById('1_class').value]);
-	if(document.getElementById('1_breath_type_1').value != 'none') {
-		dragon_1.breath_types.push(document.getElementById('1_breath_type_1').value);
-		dragon_1.breath_tiers.push(document.getElementById('1_breath_tier_1').value);
+	var breath_1_1 = document.getElementById('1_breath_type_1').value;
+	if(breath_1_1 != 'none') {
+		dragon_1.breaths[breath_1_1] = {};
+		dragon_1.breaths[breath_1_1].tier = parseInt(document.getElementById('1_breath_tier_1').value);
+		dragon_1.breaths[breath_1_1].advantage = false;
 	}
-	if(document.getElementById('1_breath_type_2').value != 'none') {
-		dragon_1.breath_types.push(document.getElementById('1_breath_type_2').value);
-		dragon_1.breath_tiers.push(document.getElementById('1_breath_tier_2').value);
+	var breath_2_1 = document.getElementById('1_breath_type_2').value;
+	if(breath_2_1 != 'none') {
+		dragon_1.breaths[breath_2_1] = {};
+		dragon_1.breaths[breath_2_1].tier = parseInt(document.getElementById('1_breath_tier_2').value);
+		dragon_1.breaths[breath_2_1].advantage = false;
 	}
 	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
 	// Dragon 1 Helm
@@ -244,13 +248,17 @@ function setupDragons() {
 	dragon_2.link = document.getElementById('2_link').value;
 	dragon_2.health = parseInt(document.getElementById('2_health').value);
 	Object.assign(dragon_2.stats, classes[document.getElementById('2_class').value]);
-	if(document.getElementById('2_breath_type_1').value != 'none') {
-		dragon_2.breath_types.push(document.getElementById('2_breath_type_1').value);
-		dragon_2.breath_tiers.push(document.getElementById('2_breath_tier_1').value);
+	var breath_1_2 = document.getElementById('2_breath_type_1').value;
+	if(breath_1_2 != 'none') {
+		dragon_2.breaths[breath_1_2] = {};
+		dragon_2.breaths[breath_1_2].tier = parseInt(document.getElementById('2_breath_tier_1').value);
+		dragon_2.breaths[breath_1_2].advantage = false;
 	}
-	if(document.getElementById('2_breath_type_2').value != 'none') {
-		dragon_2.breath_types.push(document.getElementById('2_breath_type_2').value);
-		dragon_2.breath_tiers.push(document.getElementById('2_breath_tier_2').value);
+	var breath_2_2 = document.getElementById('2_breath_type_2').value;
+	if(breath_2_2 != 'none') {
+		dragon_2.breaths[breath_2_2] = {};
+		dragon_2.breaths[breath_2_2].tier = parseInt(document.getElementById('2_breath_tier_2').value);
+		dragon_2.breaths[breath_2_2].advantage = false;
 	}
 	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
 	// Dragon 2 Helm
@@ -342,21 +350,27 @@ function calculateDamage(attacker, defender) {
 	}
 
 	// Roll breath dmg, if a breath exists
-	if(attacker.breath_types.length > 0) {
-		// array of bool; follows the order of breath_types to store if the breath in that position has any advantage
-		var breath_advantage = []; 
-		if(defender.breath_types.length > 0) {
+	var breath_dmg = 0;
+	if(Object.keys(attacker.breaths).length > 0) {
+		var used_breath = '???';
+		// Check if the defender has any breaths, if not, just choose a random breath
+		if(Object.keys(defender.breaths).length > 0) {
 			// Check for weaknesses
-			attacker.breath_types.forEach(element => {
-				// Check if 
+			Object.keys(attacker.breaths).forEach(att => {
+				// Check if any of the defender's breaths are weak to this breath
+				Object.keys(defender.breaths).forEach(def => {
+					if(breath_weaknesses[def] == att) {
+						console.log(def + ' is weak to ' + att);
+						attacker.breaths[att].advantage = true;
+					}
+				});
 			});
 		}
-		else {
-
-		}
+		console.log(attacker.breaths);
+		console.log(defender.breaths);
 	}
 	
-	// return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
+	return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
 }
 
 function roll() {
