@@ -156,21 +156,46 @@ function fight() {
 		var second = dragon_1;
 	}
 	
+	var results = dragon_1.link + " vs " + dragon_2.link + "<br>" + first.name + " goes first.<br>";
 	var first_dmg = calculateDamage(first, second);
-	// TODO:
-	// Add to results statement: 'first dealt x damage to second!'
-	// Check if any of the 2nd dragon's armor breaks
-	// If any armor breaks, add to results statement: 'second's ??? helm/chest/tail breaks!'
-	// Add a statement like 'second has x health left!'
+	// Print damage of first dragon
+	results += first.name + " deals <b>" + first_dmg + "</b> to " + second.name + "!<br>";
+	// Check if any of the 2nd dragon's armor breaks, adding to the results if it did
+	results += armorCheck(second);
+	// Add a statement like 'second has x health left!
+	second.health = (second.health - first_dmg) < 0 ? 0 : second.health - first_dmg;
+	results += second.name + " has " + second.health + " health left.<br>";
 	// Check if second is K.O.-ed at this point
 	// If so, end the fight and return the result
+	if(second.health == 0) {
+		results += second.name + " was knocked out before they could attack, and the battle ends."
+		return results;
+	}
+	results += "<br>";
 	// Otherwise, repeat steps done for first (calc dmg, check for break, print health)
+	var second_dmg = calculateDamage(second, first);
+	// Print damage of second dragon
+	results += second.name + " deals <b>" + second_dmg + "</b> to " + first.name + "!<br>";
+	// Check if any of the 1st dragon's armor breaks, adding to the results if it did
+	results += armorCheck(first);
+	// Add a statement like 'first has x health left!
+	first.health = (first.health - second_dmg) < 0 ? 0 : first.health - second_dmg;
+	results += first.name + " has " + first.health + " health left.<br>";
+	// Check if first gets K.O.-ed
+	if(first.health == 0) {
+		results += first.name + " was knocked out, and the battle ends."
+	}
+	else {
+		results += "The battle ends.";
+	}
+	return results;
 }
 
 // Function to load all the data on both dragons into a dictionary for ease of access when rolling
 function setupDragons() {
 	// Reset dragons
 	dragon_1 = {
+		name: '???',
 		link: '???',
 		health: 0,
 		stats: {},  // filled with the stats of the corresponding class
@@ -187,6 +212,7 @@ function setupDragons() {
 	}
 	
 	dragon_2 = {
+		name: '???',
 		link: '???',
 		health: 0,
 		stats: {}, // filled with the stats of the corresponding class
@@ -203,17 +229,18 @@ function setupDragons() {
 	}
 
 	// Setup dragon_1
-	dragon_1.link = document.getElementById('1_link').value;
+	dragon_1.name = getDragonName(document.getElementById('1_link').value);
+	dragon_1.link = getDragonLink(document.getElementById('1_link').value);
 	dragon_1.health = parseInt(document.getElementById('1_health').value);
 	Object.assign(dragon_1.stats, classes[document.getElementById('1_class').value]);
 	var breath_1_1 = document.getElementById('1_breath_type_1').value;
-	if(breath_1_1 != 'none') {
+	if(breath_1_1 != 'NA') {
 		dragon_1.breaths[breath_1_1] = {};
 		dragon_1.breaths[breath_1_1].tier = parseInt(document.getElementById('1_breath_tier_1').value);
 		dragon_1.breaths[breath_1_1].advantage = false;
 	}
 	var breath_2_1 = document.getElementById('1_breath_type_2').value;
-	if(breath_2_1 != 'none') {
+	if(breath_2_1 != 'NA') {
 		dragon_1.breaths[breath_2_1] = {};
 		dragon_1.breaths[breath_2_1].tier = parseInt(document.getElementById('1_breath_tier_2').value);
 		dragon_1.breaths[breath_2_1].advantage = false;
@@ -221,7 +248,7 @@ function setupDragons() {
 	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
 	// Dragon 1 Helm
 	dragon_1.armor.helm = document.getElementById('1_helm').value;
-	if(dragon_1.armor.helm != 'none') {
+	if(dragon_1.armor.helm != 'NA') {
 		var helm_type_1 = armor_sets[dragon_1.armor.helm];
 		dragon_1.armor.total_rating += helm_type_1.helm;
 		dragon_1.armor.bleed_res += helm_type_1.bleed_res;
@@ -229,7 +256,7 @@ function setupDragons() {
 	}
 	// Dragon 1 Chest
 	dragon_1.armor.chest = document.getElementById('1_chest').value;
-	if(dragon_1.armor.chest != 'none') {
+	if(dragon_1.armor.chest != 'NA') {
 		var chest_type_1 = armor_sets[dragon_1.armor.chest];
 		dragon_1.armor.total_rating += chest_type_1.chest;
 		dragon_1.armor.bleed_res += chest_type_1.bleed_res;
@@ -237,7 +264,7 @@ function setupDragons() {
 	}
 	// Dragon 1 Tail
 	dragon_1.armor.tail = document.getElementById('1_tail').value;
-	if(dragon_1.armor.tail != 'none') {
+	if(dragon_1.armor.tail != 'NA') {
 		var tail_type_1 = armor_sets[dragon_1.armor.tail];
 		dragon_1.armor.total_rating += tail_type_1.tail;
 		dragon_1.armor.bleed_res += tail_type_1.bleed_res;
@@ -245,17 +272,18 @@ function setupDragons() {
 	}
 
 	// Setup dragon_2
-	dragon_2.link = document.getElementById('2_link').value;
+	dragon_2.name = getDragonName(document.getElementById('2_link').value);
+	dragon_2.link = getDragonLink(document.getElementById('2_link').value);
 	dragon_2.health = parseInt(document.getElementById('2_health').value);
 	Object.assign(dragon_2.stats, classes[document.getElementById('2_class').value]);
 	var breath_1_2 = document.getElementById('2_breath_type_1').value;
-	if(breath_1_2 != 'none') {
+	if(breath_1_2 != 'NA') {
 		dragon_2.breaths[breath_1_2] = {};
 		dragon_2.breaths[breath_1_2].tier = parseInt(document.getElementById('2_breath_tier_1').value);
 		dragon_2.breaths[breath_1_2].advantage = false;
 	}
 	var breath_2_2 = document.getElementById('2_breath_type_2').value;
-	if(breath_2_2 != 'none') {
+	if(breath_2_2 != 'NA') {
 		dragon_2.breaths[breath_2_2] = {};
 		dragon_2.breaths[breath_2_2].tier = parseInt(document.getElementById('2_breath_tier_2').value);
 		dragon_2.breaths[breath_2_2].advantage = false;
@@ -263,7 +291,7 @@ function setupDragons() {
 	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
 	// Dragon 2 Helm
 	dragon_2.armor.helm = document.getElementById('2_helm').value;
-	if(dragon_2.armor.helm != 'none') {
+	if(dragon_2.armor.helm != 'NA') {
 		var helm_type_2 = armor_sets[dragon_2.armor.helm];
 		dragon_2.armor.total_rating += helm_type_2.helm;
 		dragon_2.armor.bleed_res += helm_type_2.bleed_res;
@@ -271,7 +299,7 @@ function setupDragons() {
 		}
 	// Dragon 2 Chest
 	dragon_2.armor.chest = document.getElementById('2_chest').value;
-	if(dragon_2.armor.chest != 'none') {
+	if(dragon_2.armor.chest != 'NA') {
 		var chest_type_2 = armor_sets[dragon_2.armor.chest];
 		dragon_2.armor.total_rating += chest_type_2.chest;
 		dragon_2.armor.bleed_res += chest_type_2.bleed_res;
@@ -279,15 +307,12 @@ function setupDragons() {
 	}
 	// Dragon 2 Tail
 	dragon_2.armor.tail = document.getElementById('2_tail').value;
-	if(dragon_2.armor.tail != 'none') {
+	if(dragon_2.armor.tail != 'NA') {
 		var tail_type_2 = armor_sets[dragon_2.armor.tail];
 		dragon_2.armor.total_rating += tail_type_2.tail;
 		dragon_2.armor.bleed_res += tail_type_2.bleed_res;
 		dragon_2.armor.magic_res += tail_type_2.magic_res;
 	}
-
-	console.log(dragon_1);
-	console.log(dragon_2);
 }
 
 function calculateDamage(attacker, defender) {
@@ -331,11 +356,13 @@ function calculateDamage(attacker, defender) {
 	// Modify the raw_dmg by accounting for defender's flat res, and random deflect chance
 	var roll_deflect = rand(1, 10);
 	raw_dmg *= (1 - deflect_chance[roll_deflect]);
+	raw_dmg = Math.trunc(raw_dmg);
 	raw_dmg -= defender.stats.base_res;
 
 	// Do armor check, reduce raw_dmg as necessary
 	var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
 	raw_dmg -= roll_armor_deflect;
+	raw_dmg = Math.trunc(raw_dmg);
 
 	// Roll magic dmg, if present
 	var magic_dmg = 0;
@@ -360,29 +387,67 @@ function calculateDamage(attacker, defender) {
 				// Check if any of the defender's breaths are weak to this breath
 				Object.keys(defender.breaths).forEach(def => {
 					if(breath_weaknesses[def] == att) {
-						console.log(def + ' is weak to ' + att);
 						attacker.breaths[att].advantage = true;
 					}
 				});
 			});
 		}
-		console.log(attacker.breaths);
-		console.log(defender.breaths);
+		// Process breaths: highest min dmg or highest max dmg or ...?
+		
 	}
-	
 	return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
+}
+
+function armorCheck(defender) {
+	// Check if all pieces are the same set and not NA, if so, max 1 piece can be broken
+	// Otherwise, each piece is rolled separately
+	var broken = "";
+	if(defender.armor.helm != 'NA' && defender.armor.helm == defender.armor.chest && defender.armor.chest == defender.armor.tail) {
+		var roll_set = rand(1, 10);
+		if(roll_set < armor_sets[defender.armor.helm].break_chance) {
+			// Select one piece to be broken; 1 =  helm, 2 = chest, 3 = tail
+			var roll_broken_piece = rand(1, 3);
+			var broken_piece = roll_broken_piece == 1 ? ' Helm' : roll_broken_piece == 2 ? ' Chest Plate' : ' Tail Guard';
+			broken += capitaliseFirstLetter(defender.armor.helm) + broken_piece + "<br>";
+		}
+	}
+	else {
+		// Check helm
+		if(defender.armor.helm != 'NA') {
+			var roll_helm = rand(1, 10);
+			if(roll_helm < armor_sets[defender.armor.helm].break_chance) {
+				broken += capitaliseFirstLetter(defender.armor.helm) + " Helm<br>";
+			}
+		}
+		// Check chest
+		if(defender.armor.chest != 'NA') {
+			var roll_chest = rand(1, 10);
+			if(roll_chest < armor_sets[defender.armor.chest].break_chance) {
+				broken += capitaliseFirstLetter(defender.armor.chest) + " Chest<br>";
+			}
+		}
+		// Check tail
+		if(defender.armor.tail != 'NA') {
+			var roll_tail = rand(1, 10);
+			if(roll_tail < armor_sets[defender.armor.tail].break_chance) {
+				broken += capitaliseFirstLetter(defender.armor.tail) + " Tail<br>";
+			}
+		}
+	}
+	if(broken != "") { broken = "Some of " + defender.name + "'s armor was broken in the attack:<br>" + broken; }
+	return broken;
 }
 
 function roll() {
 	document.getElementById("result").innerHTML = "";
-	fight(); 
+	document.getElementById("result").innerHTML = fight();
 }
 
 function clearForms() {
 	document.getElementById("result").innerHTML = "";
 }
 
-function getDragonName(import_link) {
+function getDragonLink(import_link) {
     var x = import_link.split('/');
 	var y = x[5].split('-');
     var name = "";
@@ -398,6 +463,17 @@ function getDragonName(import_link) {
         name += " ";
     }
     return "<a href='" + import_link + "'>" + name + "</a>";
+}
+
+function getDragonName(import_link) {
+    var x = import_link.split('/');
+	var y = x[5].split('-');
+    return y[0];
+}
+
+function capitaliseFirstLetter(input) {
+	var first = input[0]
+	return input.replace(first, first.toUpperCase());
 }
 
 // JavaScript Document
