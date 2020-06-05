@@ -192,5 +192,92 @@
         <br>
     </body>
 
+    <br>
+        <p>How it rolls:</p>
+        <ol>
+            <li>Gets from html (for both dragons):
+                <ul>
+                    <li>Import Link</li>
+                    <li>Health</li>
+                    <li>Class</li>
+                    <li>Breath 1</li>
+                    <li>Breath 2</li>
+                    <li>Magic Level</li>
+                    <li>Armor (Helm, Chestplate, Tail Guard)</li>
+                </ul>
+            </li>
+            <li>Setup the dragon objects with the data from HTML</li>
+                <ul>
+                    <li>Name and link to import is constructed from the provided link</li>
+                    <li>Health is set as is</li>
+                    <li>Class stats is drawn from the classes dictionary and copied into the dragon object</li>
+                    <li>Breaths will be keyed by their type, and only has to set one value: 'max_dmg'; this is retrieved from the breath_tier_dmgs dictionary</li>
+                    <li>Magic stats are similar to class stats, and the values are duplicated from the magic_classes dictionary</li>
+                    <li>For each piece that is set, the type is set in the corresponding spot, and the total_rating, bleed_res and magic_res is incremented accordingly</li>
+                </ul>
+            <li>Roll to determine which dragon goes first</li>
+            <li>The first thing added to the result string is the dragon matchup</li>
+            <li>Next, the damage dealt is calculated for the dragon going first</li>
+                <ol type="i">
+                    <li>Determine the DPS</li>
+                        <ul>
+                            <li>DPS always starts at 1</li>
+                            <li>When attempting to increment, roll 1-10 and check if it passes for that DPS no. (e.g. has to roll 1-5 to increment to 2)</li>
+                            <li>* Will not attempt to increment higher than max_dps</li>
+                        </ul>
+                    <li>Roll Raw and Bleed damage</li>
+                        <ul>
+                            <li>Rolled in rounds, determined by DPS</li>
+                            <li>Roll raw crit, tested against the dragon's class' phys_crit value</li>
+                            <li>If crit, add max_raw to total raw_dmg, else, roll between min_raw and max_raw</li>
+                            <li>Roll bleed crit, tested against the dragon's class' phys_crit value</li>
+                            <li>If crit, add max_bleed to total bleed_dmg, else, roll between 1 and max_bleed</li>
+                            <li>Repeated for each count of DPS</li>
+                        </ul>
+                    <li>Account for damage deflection</li>
+                        <ul>
+                            <li>First roll random deflection - the deflection values are retrieved from the deflect_chance dictionary</li>
+                            <li>Raw damage is reduced by the given value, and rounded down</li>
+                            <li>Flat res is then deducted from raw damage</li>
+                            <li>Finally, check for armor, if equipped, roll a value between the total rating and half of the rating, deducting it from raw damage</li>
+                            <li>Also, do a check to make sure that raw damage did not go below 0, setting it back if necessary</li>
+                        </ul>
+                    <li>Deduct armor's bleed_res from bleed damage, ensure not less than 0</li>
+                    <li>Roll magic damage, if present</li>
+                        <ul>
+                            <li>Roll magic crit, tested against the dragon's class' mag_crit value</li>
+                            <li>If crit, add magic max_dmg to total magic_dmg, else, roll between magic min_dmg and max_dmg</li>
+                            <li>Deduct armor's magic_res from magic damage, ensure not less than 0</li>
+                        </ul>
+                    <li>Select and roll breath, if present</li>
+                        <ul>
+                            <li>Roll breath crit, tested against the blanket breath crit value</li>
+                            <li>If crit, add highest_max_dmg to total breath_dmg, else, roll between 0 and highest_max_dmg</li>
+                            <li>*Unsure if armor's magic_res is supposed to work on this</li>
+                        </ul>
+                    <li>Logs DPS and individual damages in console for debugging</li>
+                    <li>Sum all damages and return a single integer value</li>
+                </ol>
+            <li>Add the damage result from first attacker to result string</li>
+            <li>Check the armor on the defending dragon</li>
+                <ul>
+                    <li>Check if all armor is from the same set and not NA, if so, roll the break chance for that armor type, and if breakage occurs, randomly select 1 of the 3 pieces</li>
+                    <li>Otherwise, each piece is rolled separately</li>
+                    <li>Any pieces of broken armor are added to a string that is then returned</li>
+                </ul>
+            <li>The returned string from checking armor will be added to the results string</li>
+            <li>Deduct damage from the defending dragon's health, limiting it to a min of 0</li>
+            <li>Check if their health has hit zero, if so stop the battle, and print the result, reporting that the dragon was defeated. Also mention the other dragon's health.</li>
+            <li>Otherwise, repeat all steps for the dragon going second</li>
+                <ul>
+                    <li>Calculate damage</li>
+                    <li>Check armor</li>
+                    <li>Deduct health</li>
+                    <li>*Also adds to the result string like the first, don't worry!</li>
+                </ul>
+            <li>Finally, add a statement if the first dragon gets knocked out, and end the battle either way.</li>
+            <li>Print results</li>
+        </ol>
+
     <script src = "./combat_roller.js"></script>
 </html>

@@ -168,7 +168,7 @@ function fight() {
 	// Check if second is K.O.-ed at this point
 	// If so, end the fight and return the result
 	if(second.health == 0) {
-		results += "<br>" + second.name + " was knocked out before they could attack, and the battle ends."
+		results += "<br>" + second.name + " was knocked out before they could attack, and the battle ends. " + first.name + " remains unharmed with " + first.health + " health left."
 		return results;
 	}
 	results += "<br>";
@@ -236,13 +236,12 @@ function setupDragons() {
 	var breath_1_1 = document.getElementById('1_breath_type_1').value;
 	if(breath_1_1 != 'NA') {
 		dragon_1.breaths[breath_1_1] = {};
-		// strength is equal to tier, but can be doubled if the breath is later found to be strong
-		dragon_1.breaths[breath_1_1].strength = parseInt(document.getElementById('1_breath_tier_1').value);
+		dragon_1.breaths[breath_1_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_1').value)];
 	}
 	var breath_2_1 = document.getElementById('1_breath_type_2').value;
 	if(breath_2_1 != 'NA') {
 		dragon_1.breaths[breath_2_1] = {};
-		dragon_1.breaths[breath_2_1].strength = parseInt(document.getElementById('1_breath_tier_2').value);
+		dragon_1.breaths[breath_2_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_2').value)];
 	}
 	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
 	// Dragon 1 Helm
@@ -278,12 +277,12 @@ function setupDragons() {
 	var breath_1_2 = document.getElementById('2_breath_type_1').value;
 	if(breath_1_2 != 'NA') {
 		dragon_2.breaths[breath_1_2] = {};
-		dragon_2.breaths[breath_1_2].strength = parseInt(document.getElementById('2_breath_tier_1').value);
+		dragon_2.breaths[breath_1_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_1').value)];
 	}
 	var breath_2_2 = document.getElementById('2_breath_type_2').value;
 	if(breath_2_2 != 'NA') {
 		dragon_2.breaths[breath_2_2] = {};
-		dragon_2.breaths[breath_2_2].strength = parseInt(document.getElementById('2_breath_tier_2').value);
+		dragon_2.breaths[breath_2_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_2').value)];
 	}
 	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
 	// Dragon 2 Helm
@@ -350,21 +349,24 @@ function calculateDamage(attacker, defender) {
 			bleed_dmg += rand(1, attacker.stats.max_bleed);
 		}
 	}
-	// Modify the raw_dmg by accounting for defender's flat res, and random deflect chance
+	// Modify the raw_dmg by accounting for random deflect chance, and defender's flat res
 	var roll_deflect = rand(1, 10);
 	raw_dmg *= (1 - deflect_chance[roll_deflect]);
 	raw_dmg = Math.trunc(raw_dmg);
 	raw_dmg -= defender.stats.base_res;
-
 	// Do armor check if armor is equipped, reduce raw_dmg as necessary
 	if(defender.armor.total_rating > 0) {
 		var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
 		raw_dmg -= roll_armor_deflect;
 		raw_dmg = Math.trunc(raw_dmg);
 	}
-
 	// Raw damage cannot be less than 0
 	if(raw_dmg < 0) { raw_dmg = 0; }
+
+	// Deduct bleed_res from armor
+	bleed_dmg -= defender.armor.bleed_res;
+	// Bleed damage cannot be less than 0
+	if(bleed_dmg < 0) { bleed_dmg = 0; }
 
 	// Roll magic dmg, if present
 	var magic_dmg = 0;
@@ -376,20 +378,22 @@ function calculateDamage(attacker, defender) {
 		else {
 			magic_dmg = rand(attacker.magic.min_dmg, attacker.magic.max_dmg);
 		}
+		// Deduct magic_res from armor
+		magic_dmg -= defender.armor.magic_res;
+		// Bleed damage cannot be less than 0
+		if(magic_dmg < 0) { magic_dmg = 0; }
 	}
 
 	// Roll breath dmg, if a breath exists
 	var breath_dmg = 0;
 	// Breaths: tier 1 = 10, tier 2 = 20...
 	// Strong breaths do double damage
-	// i.e. tier x 10 = max_dmg (x2 if strong)
 	// Same min_dmg for all (0)
-	// Select breath based on tier (x2 if strong); this will always select the breath with greater max
-	// Will refer to the above value as 'strength' [of breath]; ties will roll 50/50 to select
+	// Select breath based on max_dmg (x2 if strong); this will always select the breath with greater max
 	if(Object.keys(attacker.breaths).length > 0) {
 		// var used_breath = '';
-		// just find the greatest possible strength available from the breaths the dragon has
-		var highest_strength = 0; 
+		// just find the greatest possible max_dmg available from the breaths the dragon has
+		var highest_max_dmg = 0; 
 		Object.keys(attacker.breaths).forEach(att => {
 			// Check for weaknesses
 			// Check if the defender has any breaths, if not, skip to setting the breath
@@ -397,22 +401,31 @@ function calculateDamage(attacker, defender) {
 				// Check if any of the defender's breaths are weak to this breath
 				Object.keys(defender.breaths).forEach(def => {
 					if(breath_weaknesses[def] == att) {
-						// If defender breath is weak, double the attacker's breath strength
-						attacker.breaths[att].strength *= 2;
+						// If defender breath is weak, double the attacker's breath max_dmg
+						attacker.breaths[att].max_dmg *= 2;
 					}
 				});
 			}
-			if(attacker.breaths[att].strength > highest_strength) { highest_strength = attacker.breaths[att].strength; }
+			if(attacker.breaths[att].max_dmg > highest_max_dmg) { highest_max_dmg = attacker.breaths[att].max_dmg; }
 			// !! wait this is unnecessary if the user doesn't need to know WHAT breath is used
 			// Determine if breath is stronger than the one in the used_breath var
 			// If empty or if stronger, assign current breath
-			// If equal strength, roll 50/50 on which to use
+			// If equal max_dmg, roll 50/50 on which to use
 			// (this method shouldn't be a problem as there can only be up to 2 breaths anyway)
-			// if(used_breath == '' || attacker.breaths[used_breath].strength < attacker.breaths[att].strength) { used_breath = att; }
-			// else if (attacker.breaths[used_breath].strength == attacker.breaths[att].strength) { used_breath = (rand(1,2) == 1 ? used_breath : att); }
+			// if(used_breath == '' || attacker.breaths[used_breath].max_dmg < attacker.breaths[att].max_dmg) { used_breath = att; }
+			// else if (attacker.breaths[used_breath].max_dmg == attacker.breaths[att].max_dmg) { used_breath = (rand(1,2) == 1 ? used_breath : att); }
 		});
-		breath_dmg = rand(0, highest_strength*10);
+		var roll_breath_crit = rand(1, 10);
+		// breath_crit is a blanket value set at top of file
+		if(roll_breath_crit <= breath_crit) {
+			breath_dmg = highest_max_dmg;
+		}
+		else {
+			breath_dmg = rand(0, highest_max_dmg);
+		}
 	}
+
+	console.log("dps: " + dps + ";raw: " + raw_dmg + "; bleed: " + bleed_dmg + "; magic: " + magic_dmg + "; breath: " + breath_dmg);
 	return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
 }
 
