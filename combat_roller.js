@@ -53,6 +53,15 @@ const classes = {
 		base_res: 50,
 		mag_crit: 2
 	},
+	'grand_sap': {
+		phys_crit: 5, // out of 10
+		min_raw: 50,
+		max_raw: 135,
+		max_bleed: 40, // min is always 1
+		max_dps: 1,
+		base_res: 40,
+		mag_crit: 5
+	},
 };
 
 const breath_weaknesses = {
@@ -128,6 +137,14 @@ const armor_sets = {
 	},
 }
 
+// For raids
+const breakable = {
+	'head': 1,
+	'tail': 2,
+	'legs': 3,
+	'none': 4
+}
+
 // Inputs are retrieved in the setupDragons function
 
 function rand(min, max) {
@@ -158,8 +175,10 @@ function fight() {
 	
 	var results = dragon_1.link + " vs " + dragon_2.link + "<br>" + first.name + " goes first.<br>";
 	var first_dmg = calculateDamage(first, second);
+	var second_part_attacked = rollBreakable(second);
 	// Print damage of first dragon
-	results += first.name + " deals <b>" + first_dmg + "</b> to " + second.name + "!<br>";
+	if(second_part_attacked == 'none') { results += first.name + " deals <b>" + first_dmg + "</b> damage to " + second.name + "!<br>"; }
+	else { results += first.name + " aims for " + second.name + "'s " + second_part_attacked + ", dealing <b>" + first_dmg + "</b> damage!<br>"; }
 	// Check if any of the 2nd dragon's armor breaks, adding to the results if it did
 	results += armorCheck(second);
 	// Add a statement like 'second has x health left!
@@ -174,8 +193,10 @@ function fight() {
 	results += "<br>";
 	// Otherwise, repeat steps done for first (calc dmg, check for break, print health)
 	var second_dmg = calculateDamage(second, first);
+	var first_part_attacked = rollBreakable(first);
 	// Print damage of second dragon
-	results += second.name + " deals <b>" + second_dmg + "</b> to " + first.name + "!<br>";
+	if(first_part_attacked == 'none') { results += second.name + " deals <b>" + second_dmg + "</b> damage to " + first.name + "!<br>"; }
+	else { results += second.name + " aims for " + first.name + "'s " + first_part_attacked + ", dealing <b>" + second_dmg + "</b> damage!<br>"; }
 	// Check if any of the 1st dragon's armor breaks, adding to the results if it did
 	results += armorCheck(first);
 	// Add a statement like 'first has x health left!
@@ -208,7 +229,9 @@ function setupDragons() {
 			total_rating: 0,
 			bleed_res: 0,
 			magic_res: 0
-		}
+		},
+		useBreakable: false,
+		broken: [] // array of strings of alr broken parts
 	}
 	
 	dragon_2 = {
@@ -225,12 +248,22 @@ function setupDragons() {
 			total_rating: 0,
 			bleed_res: 0,
 			magic_res: 0
-		}
+		},
+		useBreakable: false,
+		broken: [] // array of strings of alr broken parts
 	}
 
 	// Setup dragon_1
-	dragon_1.name = getDragonName(document.getElementById('1_link').value);
-	dragon_1.link = getDragonLink(document.getElementById('1_link').value);
+	var import_link_1 = document.getElementById('1_link').value;
+	var name_1 = document.getElementById('1_name').value;
+	if(import_link_1 !== null && import_link_1.match(/^ *$/) === null) {
+		dragon_1.name = getDragonName(import_link_1);
+		dragon_1.link = getDragonLink(import_link_1);
+	}
+	else {
+		dragon_1.name = name_1;
+		dragon_1.link = name_1;
+	}
 	dragon_1.health = parseInt(document.getElementById('1_health').value);
 	Object.assign(dragon_1.stats, classes[document.getElementById('1_class').value]);
 	var breath_1_1 = document.getElementById('1_breath_type_1').value;
@@ -268,10 +301,22 @@ function setupDragons() {
 		dragon_1.armor.bleed_res += tail_type_1.bleed_res;
 		dragon_1.armor.magic_res += tail_type_1.magic_res;
 	}
+	dragon_1.useBreakable = document.getElementById('1_use_breakable').checked;
+	if(document.getElementById('1_head_part').checked) { dragon_1.broken.push('head'); }
+	if(document.getElementById('1_tail_part').checked) { dragon_1.broken.push('tail'); }
+	if(document.getElementById('1_legs_part').checked) { dragon_1.broken.push('legs'); }
 
 	// Setup dragon_2
-	dragon_2.name = getDragonName(document.getElementById('2_link').value);
-	dragon_2.link = getDragonLink(document.getElementById('2_link').value);
+	var import_link_2 = document.getElementById('2_link').value;
+	var name_2 = document.getElementById('2_name').value;
+	if(import_link_2 !== null && import_link_2.match(/^ *$/) === null) {
+		dragon_2.name = getDragonName(import_link_2);
+		dragon_2.link = getDragonLink(import_link_2);
+	}
+	else {
+		dragon_2.name = name_2;
+		dragon_2.link = name_2;
+	}
 	dragon_2.health = parseInt(document.getElementById('2_health').value);
 	Object.assign(dragon_2.stats, classes[document.getElementById('2_class').value]);
 	var breath_1_2 = document.getElementById('2_breath_type_1').value;
@@ -309,6 +354,10 @@ function setupDragons() {
 		dragon_2.armor.bleed_res += tail_type_2.bleed_res;
 		dragon_2.armor.magic_res += tail_type_2.magic_res;
 	}
+	dragon_2.useBreakable = document.getElementById('2_use_breakable').checked;
+	if(document.getElementById('2_head_part').checked) { dragon_2.broken.push('head'); }
+	if(document.getElementById('2_tail_part').checked) { dragon_2.broken.push('tail'); }
+	if(document.getElementById('2_legs_part').checked) { dragon_2.broken.push('legs'); }
 }
 
 function calculateDamage(attacker, defender) {
@@ -467,6 +516,26 @@ function armorCheck(defender) {
 	}
 	if(broken != "") { broken = "Some of " + defender.name + "'s armor was broken in the attack:<br>" + broken; }
 	return broken;
+}
+
+function rollBreakable(dragon) {
+	// Duplicate breakable dict
+	if(!dragon.useBreakable) { return 'none'; }
+	var temp = {};
+	Object.assign(temp, breakable);
+	dragon.broken.forEach(part => {
+		temp['none'] += temp[part];
+		delete temp[part];
+	});
+	var table_keys = Object.keys(temp);
+	var total_chance = 0;
+	for(let i = 0; i < table_keys.length; i++) { total_chance += temp[table_keys[i]]; }
+	var rand_num = rand(1, total_chance);
+	for(let i = 0; i < table_keys.length; i++) {
+		if(rand_num <= temp[table_keys[i]]) { return table_keys[i]; }
+		else { rand_num -= temp[table_keys[i]]; }
+	}
+	return "error!!?"
 }
 
 function roll() {
