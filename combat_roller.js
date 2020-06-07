@@ -158,6 +158,8 @@ var dragon_1;
 
 var dragon_2;
 
+var detailed_breakdown = "";
+
 function fight() {
 	// Assign the needed data to the dragon vars
 	setupDragons();
@@ -269,11 +271,13 @@ function setupDragons() {
 	var breath_1_1 = document.getElementById('1_breath_type_1').value;
 	if(breath_1_1 != 'NA') {
 		dragon_1.breaths[breath_1_1] = {};
+		dragon_1.breaths[breath_1_1].tier = parseInt(document.getElementById('1_breath_tier_1').value);
 		dragon_1.breaths[breath_1_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_1').value)];
 	}
 	var breath_2_1 = document.getElementById('1_breath_type_2').value;
 	if(breath_2_1 != 'NA') {
 		dragon_1.breaths[breath_2_1] = {};
+		dragon_1.breaths[breath_2_1].tier = parseInt(document.getElementById('1_breath_tier_2').value);
 		dragon_1.breaths[breath_2_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_2').value)];
 	}
 	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
@@ -322,11 +326,13 @@ function setupDragons() {
 	var breath_1_2 = document.getElementById('2_breath_type_1').value;
 	if(breath_1_2 != 'NA') {
 		dragon_2.breaths[breath_1_2] = {};
+		dragon_2.breaths[breath_1_2].tier = parseInt(document.getElementById('2_breath_tier_1').value);
 		dragon_2.breaths[breath_1_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_1').value)];
 	}
 	var breath_2_2 = document.getElementById('2_breath_type_2').value;
 	if(breath_2_2 != 'NA') {
 		dragon_2.breaths[breath_2_2] = {};
+		dragon_2.breaths[breath_2_2].tier = parseInt(document.getElementById('2_breath_tier_2').value);
 		dragon_2.breaths[breath_2_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_2').value)];
 	}
 	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
@@ -372,6 +378,7 @@ function calculateDamage(attacker, defender) {
 			break; // Stop the loop entirely
 		}
 	}
+	detailed_breakdown += attacker.name + " goes for " + dps + " attack(s)!<br>"
 	// Create 2 vars: one for raw and one for bleed
 	var raw_dmg = 0;
 	var bleed_dmg = 0;
@@ -383,54 +390,76 @@ function calculateDamage(attacker, defender) {
 	//     - On crit, add max_bleed to bleed_dmg
 	//     - Else, add rand betw 1 and max_bleed
 	for(let r = 0; r < dps; r++) {
+		detailed_breakdown += "> Attack #" + (r+1) + "<br>";
+		var raw_round = 0;
+		var bleed_round = 0;
 		var roll_raw_crit = rand(1, 10);
 		if(roll_raw_crit <= attacker.stats.phys_crit) {
-			raw_dmg += attacker.stats.max_raw;
+			detailed_breakdown += "* " + attacker.name + " crits their Raw attack this round.<br>"
+			raw_round = attacker.stats.max_raw;
 		}
 		else {
-			raw_dmg += rand(attacker.stats.min_raw, attacker.stats.max_raw);
+			raw_round = rand(attacker.stats.min_raw, attacker.stats.max_raw);
 		}
 		var roll_bleed_crit = rand(1, 10);
 		if(roll_bleed_crit <= attacker.stats.phys_crit) {
-			bleed_dmg += attacker.stats.max_bleed;
+			detailed_breakdown += "* " + attacker.name + " crits their Bleed attack this round.<br>"
+			bleed_round = attacker.stats.max_bleed;
 		}
 		else {
-			bleed_dmg += rand(1, attacker.stats.max_bleed);
+			bleed_round = rand(1, attacker.stats.max_bleed);
 		}
+		raw_dmg += raw_round;
+		bleed_dmg += bleed_round;
+		detailed_breakdown += "-> Raw Damage: " + raw_round + "<br>";
+		detailed_breakdown += "-> Bleed Damage: " + bleed_round + "<br>";
+		detailed_breakdown += "<br>";
 	}
+	detailed_breakdown += "Total Raw Damage: " + raw_dmg + "<br>";
+	detailed_breakdown += "Total Bleed Damage: " + bleed_dmg + "<br>";
+	detailed_breakdown += "<br>";
 	// Modify the raw_dmg by accounting for random deflect chance, and defender's flat res
 	var roll_deflect = rand(1, 10);
 	raw_dmg *= (1 - deflect_chance[roll_deflect]);
 	raw_dmg = Math.trunc(raw_dmg);
+	detailed_breakdown += defender.name + " was able to deflect <b>" + (deflect_chance[roll_deflect]*100) + "%</b> of the Raw damage, reducing it to <b>" + raw_dmg + "</b>.<br>";
 	raw_dmg -= defender.stats.base_res;
+	detailed_breakdown += defender.name + "'s natural resistance of <b>" + defender.stats.base_res + "</b> helped to reduce the Raw damage to <b>" + raw_dmg + "</b>.<br>";
 	// Do armor check if armor is equipped, reduce raw_dmg as necessary
+	var roll_armor_deflect = 0;
 	if(defender.armor.total_rating > 0) {
-		var roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
+		roll_armor_deflect = rand(defender.armor.total_rating/2, defender.armor.total_rating);
 		raw_dmg -= roll_armor_deflect;
 		raw_dmg = Math.trunc(raw_dmg);
 	}
+	detailed_breakdown += "Finally, their armor (or lack thereof) means that <b>" + roll_armor_deflect + "</b> is reduced from Raw damage to give <b>" + raw_dmg + "</b>.<br>";
 	// Raw damage cannot be less than 0
 	if(raw_dmg < 0) { raw_dmg = 0; }
+	detailed_breakdown += "(If the Raw damage has dropped below 0, it will be corrected to be equal to 0.)<br><br>"
 
 	// Deduct bleed_res from armor
 	bleed_dmg -= defender.armor.bleed_res;
 	// Bleed damage cannot be less than 0
 	if(bleed_dmg < 0) { bleed_dmg = 0; }
+	detailed_breakdown += defender.name + "'s armor offers <b>" + defender.armor.bleed_res + "</b> points of Bleed resistance, and so Bleed damage is <b>" + bleed_dmg + "</b>.<br>";
 
 	// Roll magic dmg, if present
 	var magic_dmg = 0;
 	if(Object.keys(attacker.magic).length > 0) {
 		var roll_magic_crit = rand(1, 10);
 		if(roll_magic_crit <= attacker.stats.mag_crit) {
+			detailed_breakdown += attacker.name + " is able to land a critical Magic attack! ";
 			magic_dmg = attacker.magic.max_dmg;
 		}
 		else {
 			magic_dmg = rand(attacker.magic.min_dmg, attacker.magic.max_dmg);
 		}
+		detailed_breakdown += attacker.name + " harnesses their magic to attack for <b>" + magic_dmg + "</b> Magic damage.<br>";
 		// Deduct magic_res from armor
 		magic_dmg -= defender.armor.magic_res;
 		// Bleed damage cannot be less than 0
 		if(magic_dmg < 0) { magic_dmg = 0; }
+		detailed_breakdown += defender.name + "'s armor offers <b>" + defender.armor.magic_res + "</b> points of Magic resistance, and so Magic damage is <b>" + magic_dmg + "</b>.<br>";
 	}
 
 	// Roll breath dmg, if a breath exists
@@ -442,6 +471,7 @@ function calculateDamage(attacker, defender) {
 	if(Object.keys(attacker.breaths).length > 0) {
 		// var used_breath = '';
 		// just find the greatest possible max_dmg available from the breaths the dragon has
+		var chosen_breath = '?? error';
 		var highest_max_dmg = 0; 
 		Object.keys(attacker.breaths).forEach(att => {
 			// Check for weaknesses
@@ -455,7 +485,10 @@ function calculateDamage(attacker, defender) {
 					}
 				});
 			}
-			if(attacker.breaths[att].max_dmg > highest_max_dmg) { highest_max_dmg = attacker.breaths[att].max_dmg; }
+			if(attacker.breaths[att].max_dmg > highest_max_dmg) {
+				chosen_breath = capitaliseFirstLetter(att);
+				highest_max_dmg = attacker.breaths[att].max_dmg; 
+			}
 			// !! wait this is unnecessary if the user doesn't need to know WHAT breath is used
 			// Determine if breath is stronger than the one in the used_breath var
 			// If empty or if stronger, assign current breath
@@ -467,15 +500,17 @@ function calculateDamage(attacker, defender) {
 		var roll_breath_crit = rand(1, 10);
 		// breath_crit is a blanket value set at top of file
 		if(roll_breath_crit <= breath_crit) {
+			detailed_breakdown += attacker.name + " is able to land a critical Breath attack! ";
 			breath_dmg = highest_max_dmg;
 		}
 		else {
 			breath_dmg = rand(0, highest_max_dmg);
 		}
+		detailed_breakdown += attacker.name + " breathes " + chosen_breath + " to deal <b>" + breath_dmg + "</b> Breath damage.<br>";
 	}
-
-	console.log(attacker.name + " damage; dps: " + dps + "; raw: " + raw_dmg + "; bleed: " + bleed_dmg + "; magic: " + magic_dmg + "; breath: " + breath_dmg);
-	return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
+	var total_dmg = raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
+	detailed_breakdown += "Summary of " + attacker.name + "'s Turn:<br>DPS: " + dps + "<br>Raw: " + raw_dmg + "<br>Bleed: " + bleed_dmg + "<br>Magic: " + magic_dmg + "<br>Breath: " + breath_dmg + "<br><b>Total:</b> " + total_dmg + "<br><br>";
+	return total_dmg
 }
 
 function armorCheck(defender) {
@@ -539,8 +574,10 @@ function rollBreakable(dragon) {
 }
 
 function roll() {
-	document.getElementById("result").innerHTML = "";
+	detailed_breakdown = "";
 	document.getElementById("result").innerHTML = fight();
+	document.getElementById("detailed_breakdown").innerHTML = detailed_breakdown;
+	document.getElementById("dragon_details").innerHTML = printDragonDetails(dragon_1) + "<br><br>" + printDragonDetails(dragon_2);
 }
 
 function clearForms() {
@@ -569,6 +606,39 @@ function getDragonName(import_link) {
     var x = import_link.split('/');
 	var y = x[5].split('-');
     return y[0];
+}
+
+function printDragonDetails(dragon) {
+	var dragon_string = dragon.link + " details:<br>";
+	dragon_string += "Name: " + dragon.name + "<br>";
+	dragon_string += "Health: " + dragon.health + "<br>";
+	dragon_string += "<br>";
+	dragon_string += "Class Stats: " + "<br>";
+	dragon_string += "> Physical Crit: " + dragon.stats.phys_crit + "<br>";
+	dragon_string += "> Min/Max Raw Damage: " + dragon.stats.min_raw + "/" + dragon.stats.max_raw + "<br>";
+	dragon_string += "> Min/Max Bleed: 0/" + dragon.stats.max_bleed + "<br>";
+	dragon_string += "> Max DPS: " + dragon.stats.max_dps + "<br>";
+	dragon_string += "> Base Resistance: " + dragon.stats.base_res + "<br>";
+	dragon_string += "> Magic Crit: " + dragon.stats.mag_crit + "<br>";
+	dragon_string += "Min/Max Magic: " + (Object.keys(dragon.magic).length <= 0 ? "0/0" : dragon.magic.min_dmg + "/" + dragon.magic.max_dmg) + "<br>";
+	dragon_string += "<br>";
+	dragon_string += "Breath Crit: 4 (Blanket Value for all dragons)<br>";
+	dragon_string += "Breaths: " + (Object.keys(dragon.breaths).length <= 0 ? "None" : "") + "<br>";
+	Object.keys(dragon.breaths).forEach(breath => {
+		dragon_string += "> " + capitaliseFirstLetter(breath) + "<br>";
+		dragon_string += "-> Tier " + dragon.breaths[breath].tier + "<br>", 
+		dragon_string += "-> Strong against " + capitaliseFirstLetter(breath_weaknesses[breath]) + "<br>",
+		dragon_string += "-> Min/Max Damage: 0/" + dragon.breaths[breath].max_dmg + "<br>"
+	});
+	dragon_string += "<br>";
+	dragon_string += "Armor: " + "<br>";
+	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.helm) + " Helm <br>";
+	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.chest) + " Chest Plate <br>";
+	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.tail) + " Tail Guard <br>";
+	dragon_string += "> Total Armor Rating: " + dragon.armor.total_rating + "<br>";
+	dragon_string += "> Bleed Resistance: " + dragon.armor.bleed_res + "<br>";
+	dragon_string += "> Magic Resistance: " + dragon.armor.magic_res + "<br>";
+	return dragon_string;
 }
 
 function capitaliseFirstLetter(input) {
