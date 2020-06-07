@@ -474,7 +474,7 @@ function calculateDamage(attacker, defender) {
 		}
 	}
 
-	console.log("dps: " + dps + ";raw: " + raw_dmg + "; bleed: " + bleed_dmg + "; magic: " + magic_dmg + "; breath: " + breath_dmg);
+	console.log(attacker.name + " damage; dps: " + dps + "; raw: " + raw_dmg + "; bleed: " + bleed_dmg + "; magic: " + magic_dmg + "; breath: " + breath_dmg);
 	return raw_dmg + bleed_dmg + magic_dmg + breath_dmg;
 }
 
