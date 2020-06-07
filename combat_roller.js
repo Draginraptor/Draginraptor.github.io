@@ -419,7 +419,7 @@ function calculateDamage(attacker, defender) {
 
 	// Roll magic dmg, if present
 	var magic_dmg = 0;
-	if(attacker.magic.length > 0) {
+	if(Object.keys(attacker.magic).length > 0) {
 		var roll_magic_crit = rand(1, 10);
 		if(roll_magic_crit <= attacker.stats.mag_crit) {
 			magic_dmg = attacker.magic.max_dmg;
