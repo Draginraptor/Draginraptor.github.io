@@ -1,19 +1,38 @@
 <!doctype html>
 <head>
-    <title>(Test) Combat Roller</title>
+    <title>Combat Roller</title>
+    
+    
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="combat.css" rel="stylesheet">
 </head>
 <html lang="en">
+    
     <body>
-        <a href="index.html">Back to navigation</a>
+<a id="ddmenuLink" href="NavBar.html">Menu</a>
+
+
+<table id="rollerTitle">
+	<tr>
+		<div id="title"><br><h1>Souls-Between Combat Roller</h1></div>
+	</tr>
+</table>
+
         <br>
         <br>
-        <p>Note: Each dragon allows the input of an Import Link and a Name, however, note that the Import Link always takes precedence. The Name field is useful for dragons that don't have an import.</p>
-        <h3>Dragon 1</h5>
+        
+        <table id="mainContent">
+	<form id="rollerForm" autocomplete="off">
+	    	<tr>
+	<!-- SIRE -->
+	<td class="entryBox sire">
+		<h2>Opponent 1</h2>
         <label for="1_link">Import Link:</label>
-        <input type="text" id="1_link">
-        <label for="1_name">Name (useful when an import is not present):</label>
+        <input type="text" id="1_link"><br>
+        <label for="1_name">Name (if not Uploaded):</label>
         <input type="text" id="1_name">
         <br>
+
         <label for="1_health">Health:</label>
         <input type="number" id="1_health" min="1" value=500>
         <br>
@@ -27,6 +46,7 @@
             <option value="grand_sap">Grand Sapiere</option>
         </select>
         <br>
+
         <label for="1_breath_type_1">Breath 1:</label>
         <select id="1_breath_type_1">
             <option value="NA">NA</option>
@@ -101,15 +121,21 @@
             <option value="aether">Aether Tail Guard</option>
         </select>
         <br>
-        <input type="checkbox" id="1_use_breakable">Roll for breakable parts</input>
-        <br>
+        <hr>
+        <b>Part Break</b><br>
+        <i>Parts break on PvE, not PvP</i><br>
+        <input type="checkbox" id="1_use_breakable">Roll for breakable parts<br>
         <input type="checkbox" id="1_head_part">Head already broken</input>
         <input type="checkbox" id="1_tail_part">Tail already broken</input>
         <input type="checkbox" id="1_legs_part">Legs already broken</input>
-        <br><h3>Dragon 2</h5>
+        <br>
+        
+        	<!-- DAM -->
+	<td class="entryBox dam">
+		<h2>Opponent 2</h2>
             <label for="2_link">Import Link:</label>
-            <input type="text" id="2_link">
-            <label for="2_name">Name (useful when an import is not present):</label>
+            <input type="text" id="2_link"><br>
+            <label for="2_name">Name (If not uploaded):</label>
             <input type="text" id="2_name">
             <br>
             <label for="2_health">Health:</label>
@@ -199,106 +225,111 @@
                 <option value="aether">Aether Tail Guard</option>
             </select>
             <br>
+            <hr>
+             <b>Part Break</b><br>
+        <i>Parts break on PvE, not PvP</i><br>
             <input type="checkbox" id="2_use_breakable">Roll for breakable parts</input>
             <br>
             <input type="checkbox" id="2_head_part">Head already broken</input>
             <input type="checkbox" id="2_tail_part">Tail already broken</input>
             <input type="checkbox" id="2_legs_part">Legs already broken</input>
+           <br>
+           	<!-- MODIFIERS -->
+	<td class="entryBox modifiers">
+		<h2>Modifiers </h2><br>
+		Placeholder, Don't Touch
+		<div width="100%">
+			<span style="white-space: nowrap;">
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="DH" id="DH">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="DT" id="DT">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="DE" id="DE">????</label>
+			</span>
+			<br>
+			<span style="white-space: nowrap;">
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="FP" id="FP">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="RB" id="RB">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BB" id="BB">????</label>
+			</span>
+			<br>
+			<span style="white-space: nowrap;">
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="SB" id="SB">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="GP" id="GP">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="AT" id="AT">????</label>
+			</span>
+			<br>
+			<span style="white-space: nowrap;">
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BF" id="BF">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BU" id="BU">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BI" id="BI">????</label>
+			</span>
+			<br>
+			<span style="white-space: nowrap;">
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BV" id="BV">????</label>
+                <label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="BH" id="BH">????</label>
+				<label class="radioLabel"><input type="checkbox" onchange="updateModifiers()" name="modifierSelector" value="DI" id="DI">????</label>
+			</span>
+				<br>
+				<i>This roller is a work in progress, and is currently only built to handle the Tides of Lightning Event!<br>
+				More will be added as the roller is completed!</i>
+				<br><br><br><br><br><br><br><br>
+			</div>
+
+		</div>
+	</td>
+	</tr>
+	</form>
+</table>
+           
+           <br>
             <br>
-            <br>
+            <center>
         <button class="button" onclick=roll()>Roll Combat</button>
+        
+        <table id="nest">
+	<td>
         <p id="result" style="border: 2px solid black;"></p>
-        <p id="detailed_breakdown" style="border: 2px solid black;"></p>
-        <p id="dragon_details" style="border: 2px solid black;"></p>
         <br>
+        </td>
+        </table>
+        <p>
+  <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Detailed Info</a>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Dragon Details</button>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Both</button>
+</p>
+<div class="row">
+  <div class="col">
+    <div class="collapse multi-collapse" id="multiCollapseExample1">
+      <div class="card card-body">
+                  <p id="detailed_breakdown" style="border: 2px solid black;"></p>
+
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="collapse multi-collapse" id="multiCollapseExample2">
+      <div class="card card-body">
+        <p id="dragon_details" style="border: 2px solid black;"></p>
+      </div>
+    </div>
+  </div>
+</div>
+       </center>
     </body>
 
-    <br>
-        <p>How it rolls:</p>
-        <ol>
-            <li>Gets from html (for both dragons):
-                <ul>
-                    <li>Import Link</li>
-                    <li>Health</li>
-                    <li>Class</li>
-                    <li>Breath 1</li>
-                    <li>Breath 2</li>
-                    <li>Magic Level</li>
-                    <li>Armor (Helm, Chestplate, Tail Guard)</li>
-                </ul>
-            </li>
-            <li>Setup the dragon objects with the data from HTML</li>
-                <ul>
-                    <li>Name and link to import is constructed from the provided link</li>
-                    <li>Health is set as is</li>
-                    <li>Class stats is drawn from the classes dictionary and copied into the dragon object</li>
-                    <li>Breaths will be keyed by their type, and only has to set one value: 'max_dmg'; this is retrieved from the breath_tier_dmgs dictionary</li>
-                    <li>Magic stats are similar to class stats, and the values are duplicated from the magic_classes dictionary</li>
-                    <li>For each piece that is set, the type is set in the corresponding spot, and the total_rating, bleed_res and magic_res is incremented accordingly</li>
-                </ul>
-            <li>Roll to determine which dragon goes first</li>
-            <li>The first thing added to the result string is the dragon matchup</li>
-            <li>Next, the damage dealt is calculated for the dragon going first</li>
-                <ol type="i">
-                    <li>Determine the DPS</li>
-                        <ul>
-                            <li>DPS always starts at 1</li>
-                            <li>When attempting to increment, roll 1-10 and check if it passes for that DPS no. (e.g. has to roll 1-5 to increment to 2)</li>
-                            <li>* Will not attempt to increment higher than max_dps</li>
-                        </ul>
-                    <li>Roll Raw and Bleed damage</li>
-                        <ul>
-                            <li>Rolled in rounds, determined by DPS</li>
-                            <li>Roll raw crit, tested against the dragon's class' phys_crit value</li>
-                            <li>If crit, add max_raw to total raw_dmg, else, roll between min_raw and max_raw</li>
-                            <li>Roll bleed crit, tested against the dragon's class' phys_crit value</li>
-                            <li>If crit, add max_bleed to total bleed_dmg, else, roll between 1 and max_bleed</li>
-                            <li>Repeated for each count of DPS</li>
-                        </ul>
-                    <li>Account for damage deflection</li>
-                        <ul>
-                            <li>First roll random deflection - the deflection values are retrieved from the deflect_chance dictionary</li>
-                            <li>Raw damage is reduced by the given value, and rounded down</li>
-                            <li>Flat res is then deducted from raw damage</li>
-                            <li>Finally, check for armor, if equipped, roll a value between the total rating and half of the rating, deducting it from raw damage</li>
-                            <li>Also, do a check to make sure that raw damage did not go below 0, setting it back if necessary</li>
-                        </ul>
-                    <li>Deduct armor's bleed_res from bleed damage, ensure not less than 0</li>
-                    <li>Roll magic damage, if present</li>
-                        <ul>
-                            <li>Roll magic crit, tested against the dragon's class' mag_crit value</li>
-                            <li>If crit, add magic max_dmg to total magic_dmg, else, roll between magic min_dmg and max_dmg</li>
-                            <li>Deduct armor's magic_res from magic damage, ensure not less than 0</li>
-                        </ul>
-                    <li>Select and roll breath, if present</li>
-                        <ul>
-                            <li>Roll breath crit, tested against the blanket breath crit value</li>
-                            <li>If crit, add highest_max_dmg to total breath_dmg, else, roll between 0 and highest_max_dmg</li>
-                            <li>*Unsure if armor's magic_res is supposed to work on this</li>
-                        </ul>
-                    <li>Logs DPS and individual damages in console for debugging</li>
-                    <li>Sum all damages and return a single integer value</li>
-                </ol>
-            <li>Add the damage result from first attacker to result string</li>
-            <li>Check the armor on the defending dragon</li>
-                <ul>
-                    <li>Check if all armor is from the same set and not NA, if so, roll the break chance for that armor type, and if breakage occurs, randomly select 1 of the 3 pieces</li>
-                    <li>Otherwise, each piece is rolled separately</li>
-                    <li>Any pieces of broken armor are added to a string that is then returned</li>
-                </ul>
-            <li>The returned string from checking armor will be added to the results string</li>
-            <li>Deduct damage from the defending dragon's health, limiting it to a min of 0</li>
-            <li>Check if their health has hit zero, if so stop the battle, and print the result, reporting that the dragon was defeated. Also mention the other dragon's health.</li>
-            <li>Otherwise, repeat all steps for the dragon going second</li>
-                <ul>
-                    <li>Calculate damage</li>
-                    <li>Check armor</li>
-                    <li>Deduct health</li>
-                    <li>*Also adds to the result string like the first, don't worry!</li>
-                </ul>
-            <li>Finally, add a statement if the first dragon gets knocked out, and end the battle either way.</li>
-            <li>Print results</li>
-        </ol>
+
+<table id="footer">
+	<td id="footerElement"> v0.1.2 - Created By Draginraptor<br>
+	Souls-Between 2020<br>
+</table>
 
     <script src = "./combat_roller.js"></script>
-</html>
+	<script src="js/ddmenu.js" type="text/javascript"></script>
+	<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>   
+   <script src="./Bootstrap/Bootstrap_JS/bootstrap.bundle.min.js"
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="js/bootstrap.js"></script>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'}),_trfd.push({'ap':'cpsh'},{'server':'p3plcpnl0583'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/tcc/tcc_l.combined.1.0.6.min.js'></script></html>

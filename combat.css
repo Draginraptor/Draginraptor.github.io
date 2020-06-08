@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css?family=Almendra+SC');
+@import url('https://fonts.googleapis.com/css?family=Quintessential');
+@import url('https://fonts.googleapis.com/css?family=Port+Lligat+Slab');
+@import url('https://fonts.googleapis.com/css?family=Overlock');
+@import url('https://fonts.googleapis.com/css?family=Nova+Flat');
+@import url('https://fonts.googleapis.com/css?family=Viga');
+
+html {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+    background-color: #A9CED1;
+    background-size: cover;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    height: 100%;
+    min-width: 100%;
+    background-repeat: no-repeat;
+    margin: 0px;
+	color: #000;
+
+}
+
+#rollerTitle {
+	width: 100%;
+}
+#mainContent{
+    background-color: #ceedf0;
+	width: 100%;
+	border-spacing: 20px 20px;
+}
+#formButtons{
+	width: 100%;
+	text-align: center;
+}
+#nest {
+	width: 100%;
+	text-align: center;
+}
+#rollerForm {
+	width: 100%;
+}
+
+h1 {
+	font-family: "Almendra SC";
+	text-align: center;
+	font-size: 36px;
+	margin: 0px;
+}
+h2 {
+	font-family: "Quintessential";
+	text-align: left;
+	font-weight: bold;
+	margin: 10px;
+}
+
+a {
+	color: #FFFFFF;
+	font-family: "Port Lligat Slab";
+	font-weight: bold;
+	margin: 10px;
+	text-align: left;
+}
+
+.leftAligned {
+	text-align: left;
+}
+
+.entryBox, input, textarea, select, .radioLabel, #nestTextArea {
+	background: #3598a1;
+	border-style: solid;
+	border-width: 3px;
+	border-color: rgba(225, 225, 255, 0.85);
+        border-radius: 2px;
+
+}
+
+textarea, input, #nestTextArea {
+	resize: none;
+}
+
+input:focus {
+	
+}
+.entryBox {
+    text-align: center;
+	margin: 200px;
+}
+.cellElement {
+	margin: 5px;
+}
+
+.attribute {
+	display: inline-block;
+}
+
+input, textarea, #nestTextArea, select, button {
+	font-family: "Overlock";
+	font-size: 14px;
+	font-weight: bold;
+	background: #2d6369;
+	border-width: 1px;
+    border-radius: 2px;
+	width: auto;
+}
+
+[type="text"], textarea, #nestTextArea {
+	padding: 5px;
+	width: calc(100% - 20px);
+}
+[type="radio"] {
+	display: inline-block;
+}
+.radioLabel {
+	font-family: "Overlock";
+	font-size: 14px;
+	font-weight: bold;
+	display: inline-block;
+	background: rgba(61, 61, 75, 0.50);
+	border-width: 1px;
+    border-radius: 2px;
+	padding: 3px;
+	margin: 2px;
+	width: 20ch;
+	color: #FFFFFF;
+}
+input[type="radio"]:checked ~ * {
+	background: #FFFFFF;
+}
+.wideCheckbox {
+	font-family: "Overlock";
+	font-size: 14px;
+	font-weight: bold;
+	display: inline-block;
+	background: rgba(61, 61, 75, 0.50);
+	border-width: 1px;
+    border-radius: 2px;
+	padding: 3px;
+	margin: 2px;
+	width: calc(90% - 10px);
+	color: #FFFFFF;
+}
+button {
+	font-family: "Nova Flat";
+	font-size: 24px;
+	background: rgba(61, 61, 75, 0.50);
+	border-width: 1px;
+    border-radius: 2px;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 12ch;
+	padding: 8px;
+}
+
+#footer {
+	text-align: center;
+	width: 100%;
+}
+
+#footerElement {
+	display: inline-block;
+	text-align: center;
+	font-family: "Overlock";
+	font-size: 14px;
+	color: #A9CED1;
+	font-weight: bold;
+	background: #3598a1;
+	border-style: solid;
+	border-width: 1px;
+    border-radius: 2px;
+	padding: 3px;
+	margin: 2px;
+	width: auto;
+}
+
+#nestTextArea {
+	font-family: "Viga";
+	overflow: auto;
+	width: 60%;
+	height: 450px;
+	display: inline-block;
+	color: #FFFFFF;
+	font-weight: normal;
+	text-align: left;
+	white-space: pre;
+}
+select:focus {
+	background: rgba(225, 225, 255, 0.9);
+}
+
+.rightimg {
+	float: right;
+	padding: 5px;
+}
