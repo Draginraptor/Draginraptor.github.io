@@ -1,6 +1,6 @@
 // Data
 
-// dps is number of times a dragon gets to roll their raw/bleed, keyed as follows:
+// dps is number of times a opponent gets to roll their raw/bleed, keyed as follows:
 // [attack_no.]:[value to roll under or equal to get that extra attack]
 const dps_chance = { 2: 5, 3: 3 };
 
@@ -145,7 +145,7 @@ const breakable = {
 	'none': 4
 }
 
-// Inputs are retrieved in the setupDragons function
+// Inputs are retrieved in the setupOpponents function
 
 function rand(min, max) {
     var min = min || 0,
@@ -154,34 +154,34 @@ function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-var dragon_1;
+var opponent_1;
 
-var dragon_2;
+var opponent_2;
 
 var detailed_breakdown = "";
 
 function fight() {
-	// Assign the needed data to the dragon vars
-	setupDragons();
+	// Assign the needed data to the opponent vars
+	setupOpponents();
 	// Roll to determine who goes first
 	var first;
 	var second;
 	if(rand(1, 2) == 1) {
-		var first = dragon_1;
-		var second = dragon_2;
+		var first = opponent_1;
+		var second = opponent_2;
 	}
 	else {
-		var first = dragon_2;
-		var second = dragon_1;
+		var first = opponent_2;
+		var second = opponent_1;
 	}
 	
-	var results = dragon_1.link + " vs " + dragon_2.link + "<br>" + first.name + " goes first.<br>";
+	var results = opponent_1.link + " vs " + opponent_2.link + "<br>" + first.name + " goes first.<br>";
 	var first_dmg = calculateDamage(first, second);
 	var second_part_attacked = rollBreakable(second);
-	// Print damage of first dragon
+	// Print damage of first opponent
 	if(second_part_attacked == 'none') { results += first.name + " deals <b>" + first_dmg + "</b> damage to " + second.name + "!<br>"; }
 	else { results += first.name + " aims for " + second.name + "'s " + second_part_attacked + ", dealing <b>" + first_dmg + "</b> damage!<br>"; }
-	// Check if any of the 2nd dragon's armor breaks, adding to the results if it did
+	// Check if any of the 2nd opponent's armor breaks, adding to the results if it did
 	results += armorCheck(second);
 	// Add a statement like 'second has x health left!
 	second.health = (second.health - first_dmg) < 0 ? 0 : second.health - first_dmg;
@@ -196,10 +196,10 @@ function fight() {
 	// Otherwise, repeat steps done for first (calc dmg, check for break, print health)
 	var second_dmg = calculateDamage(second, first);
 	var first_part_attacked = rollBreakable(first);
-	// Print damage of second dragon
+	// Print damage of second opponent
 	if(first_part_attacked == 'none') { results += second.name + " deals <b>" + second_dmg + "</b> damage to " + first.name + "!<br>"; }
 	else { results += second.name + " aims for " + first.name + "'s " + first_part_attacked + ", dealing <b>" + second_dmg + "</b> damage!<br>"; }
-	// Check if any of the 1st dragon's armor breaks, adding to the results if it did
+	// Check if any of the 1st opponent's armor breaks, adding to the results if it did
 	results += armorCheck(first);
 	// Add a statement like 'first has x health left!
 	first.health = (first.health - second_dmg) < 0 ? 0 : first.health - second_dmg;
@@ -214,10 +214,10 @@ function fight() {
 	return results;
 }
 
-// Function to load all the data on both dragons into a dictionary for ease of access when rolling
-function setupDragons() {
-	// Reset dragons
-	dragon_1 = {
+// Function to load all the data on both opponents into a dictionary for ease of access when rolling
+function setupOpponents() {
+	// Reset opponents
+	opponent_1 = {
 		name: '???',
 		link: '???',
 		health: 0,
@@ -236,7 +236,7 @@ function setupDragons() {
 		broken: [] // array of strings of alr broken parts
 	}
 	
-	dragon_2 = {
+	opponent_2 = {
 		name: '???',
 		link: '???',
 		health: 0,
@@ -255,115 +255,123 @@ function setupDragons() {
 		broken: [] // array of strings of alr broken parts
 	}
 
-	// Setup dragon_1
+	// Setup opponent_1
 	var import_link_1 = document.getElementById('1_link').value;
 	var name_1 = document.getElementById('1_name').value;
 	if(import_link_1 !== null && import_link_1.match(/^ *$/) === null) {
-		dragon_1.name = getDragonName(import_link_1);
-		dragon_1.link = getDragonLink(import_link_1);
+		opponent_1.name = getOpponentName(import_link_1);
+		opponent_1.link = getOpponentLink(import_link_1);
+	}
+	else if(name_1 !== null && name_1.match(/^ *$/) === null) {
+		opponent_1.name = name_1;
+		opponent_1.link = name_1;
 	}
 	else {
-		dragon_1.name = name_1;
-		dragon_1.link = name_1;
+		opponent_1.name = "Opponent 1";
+		opponent_1.link = "Opponent 1";
 	}
-	dragon_1.health = parseInt(document.getElementById('1_health').value);
-	Object.assign(dragon_1.stats, classes[document.getElementById('1_class').value]);
+	opponent_1.health = parseInt(document.getElementById('1_health').value);
+	Object.assign(opponent_1.stats, classes[document.getElementById('1_class').value]);
 	var breath_1_1 = document.getElementById('1_breath_type_1').value;
 	if(breath_1_1 != 'NA') {
-		dragon_1.breaths[breath_1_1] = {};
-		dragon_1.breaths[breath_1_1].tier = parseInt(document.getElementById('1_breath_tier_1').value);
-		dragon_1.breaths[breath_1_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_1').value)];
+		opponent_1.breaths[breath_1_1] = {};
+		opponent_1.breaths[breath_1_1].tier = parseInt(document.getElementById('1_breath_tier_1').value);
+		opponent_1.breaths[breath_1_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_1').value)];
 	}
 	var breath_2_1 = document.getElementById('1_breath_type_2').value;
 	if(breath_2_1 != 'NA') {
-		dragon_1.breaths[breath_2_1] = {};
-		dragon_1.breaths[breath_2_1].tier = parseInt(document.getElementById('1_breath_tier_2').value);
-		dragon_1.breaths[breath_2_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_2').value)];
+		opponent_1.breaths[breath_2_1] = {};
+		opponent_1.breaths[breath_2_1].tier = parseInt(document.getElementById('1_breath_tier_2').value);
+		opponent_1.breaths[breath_2_1].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('1_breath_tier_2').value)];
 	}
-	Object.assign(dragon_1.magic, magic_classes[document.getElementById('1_magic').value]);
-	// Dragon 1 Helm
-	dragon_1.armor.helm = document.getElementById('1_helm').value;
-	if(dragon_1.armor.helm != 'NA') {
-		var helm_type_1 = armor_sets[dragon_1.armor.helm];
-		dragon_1.armor.total_rating += helm_type_1.helm;
-		dragon_1.armor.bleed_res += helm_type_1.bleed_res;
-		dragon_1.armor.magic_res += helm_type_1.magic_res;
+	Object.assign(opponent_1.magic, magic_classes[document.getElementById('1_magic').value]);
+	// Opponent 1 Helm
+	opponent_1.armor.helm = document.getElementById('1_helm').value;
+	if(opponent_1.armor.helm != 'NA') {
+		var helm_type_1 = armor_sets[opponent_1.armor.helm];
+		opponent_1.armor.total_rating += helm_type_1.helm;
+		opponent_1.armor.bleed_res += helm_type_1.bleed_res;
+		opponent_1.armor.magic_res += helm_type_1.magic_res;
 	}
-	// Dragon 1 Chest
-	dragon_1.armor.chest = document.getElementById('1_chest').value;
-	if(dragon_1.armor.chest != 'NA') {
-		var chest_type_1 = armor_sets[dragon_1.armor.chest];
-		dragon_1.armor.total_rating += chest_type_1.chest;
-		dragon_1.armor.bleed_res += chest_type_1.bleed_res;
-		dragon_1.armor.magic_res += chest_type_1.magic_res;
+	// Opponent 1 Chest
+	opponent_1.armor.chest = document.getElementById('1_chest').value;
+	if(opponent_1.armor.chest != 'NA') {
+		var chest_type_1 = armor_sets[opponent_1.armor.chest];
+		opponent_1.armor.total_rating += chest_type_1.chest;
+		opponent_1.armor.bleed_res += chest_type_1.bleed_res;
+		opponent_1.armor.magic_res += chest_type_1.magic_res;
 	}
-	// Dragon 1 Tail
-	dragon_1.armor.tail = document.getElementById('1_tail').value;
-	if(dragon_1.armor.tail != 'NA') {
-		var tail_type_1 = armor_sets[dragon_1.armor.tail];
-		dragon_1.armor.total_rating += tail_type_1.tail;
-		dragon_1.armor.bleed_res += tail_type_1.bleed_res;
-		dragon_1.armor.magic_res += tail_type_1.magic_res;
+	// Opponent 1 Tail
+	opponent_1.armor.tail = document.getElementById('1_tail').value;
+	if(opponent_1.armor.tail != 'NA') {
+		var tail_type_1 = armor_sets[opponent_1.armor.tail];
+		opponent_1.armor.total_rating += tail_type_1.tail;
+		opponent_1.armor.bleed_res += tail_type_1.bleed_res;
+		opponent_1.armor.magic_res += tail_type_1.magic_res;
 	}
-	dragon_1.useBreakable = document.getElementById('1_use_breakable').checked;
-	if(document.getElementById('1_head_part').checked) { dragon_1.broken.push('head'); }
-	if(document.getElementById('1_tail_part').checked) { dragon_1.broken.push('tail'); }
-	if(document.getElementById('1_legs_part').checked) { dragon_1.broken.push('legs'); }
+	opponent_1.useBreakable = document.getElementById('1_use_breakable').checked;
+	if(document.getElementById('1_head_part').checked) { opponent_1.broken.push('head'); }
+	if(document.getElementById('1_tail_part').checked) { opponent_1.broken.push('tail'); }
+	if(document.getElementById('1_legs_part').checked) { opponent_1.broken.push('legs'); }
 
-	// Setup dragon_2
+	// Setup opponent_2
 	var import_link_2 = document.getElementById('2_link').value;
 	var name_2 = document.getElementById('2_name').value;
 	if(import_link_2 !== null && import_link_2.match(/^ *$/) === null) {
-		dragon_2.name = getDragonName(import_link_2);
-		dragon_2.link = getDragonLink(import_link_2);
+		opponent_2.name = getOpponentName(import_link_2);
+		opponent_2.link = getOpponentLink(import_link_2);
+	}
+	else if(name_2 !== null && name_2.match(/^ *$/) === null) {
+		opponent_2.name = name_2;
+		opponent_2.link = name_2;
 	}
 	else {
-		dragon_2.name = name_2;
-		dragon_2.link = name_2;
+		opponent_2.name = "Opponent 2";
+		opponent_2.link = "Opponent 2";
 	}
-	dragon_2.health = parseInt(document.getElementById('2_health').value);
-	Object.assign(dragon_2.stats, classes[document.getElementById('2_class').value]);
+	opponent_2.health = parseInt(document.getElementById('2_health').value);
+	Object.assign(opponent_2.stats, classes[document.getElementById('2_class').value]);
 	var breath_1_2 = document.getElementById('2_breath_type_1').value;
 	if(breath_1_2 != 'NA') {
-		dragon_2.breaths[breath_1_2] = {};
-		dragon_2.breaths[breath_1_2].tier = parseInt(document.getElementById('2_breath_tier_1').value);
-		dragon_2.breaths[breath_1_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_1').value)];
+		opponent_2.breaths[breath_1_2] = {};
+		opponent_2.breaths[breath_1_2].tier = parseInt(document.getElementById('2_breath_tier_1').value);
+		opponent_2.breaths[breath_1_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_1').value)];
 	}
 	var breath_2_2 = document.getElementById('2_breath_type_2').value;
 	if(breath_2_2 != 'NA') {
-		dragon_2.breaths[breath_2_2] = {};
-		dragon_2.breaths[breath_2_2].tier = parseInt(document.getElementById('2_breath_tier_2').value);
-		dragon_2.breaths[breath_2_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_2').value)];
+		opponent_2.breaths[breath_2_2] = {};
+		opponent_2.breaths[breath_2_2].tier = parseInt(document.getElementById('2_breath_tier_2').value);
+		opponent_2.breaths[breath_2_2].max_dmg = breath_tier_dmgs[parseInt(document.getElementById('2_breath_tier_2').value)];
 	}
-	Object.assign(dragon_2.magic, magic_classes[document.getElementById('2_magic').value]);
-	// Dragon 2 Helm
-	dragon_2.armor.helm = document.getElementById('2_helm').value;
-	if(dragon_2.armor.helm != 'NA') {
-		var helm_type_2 = armor_sets[dragon_2.armor.helm];
-		dragon_2.armor.total_rating += helm_type_2.helm;
-		dragon_2.armor.bleed_res += helm_type_2.bleed_res;
-		dragon_2.armor.magic_res += helm_type_2.magic_res;
+	Object.assign(opponent_2.magic, magic_classes[document.getElementById('2_magic').value]);
+	// Opponent 2 Helm
+	opponent_2.armor.helm = document.getElementById('2_helm').value;
+	if(opponent_2.armor.helm != 'NA') {
+		var helm_type_2 = armor_sets[opponent_2.armor.helm];
+		opponent_2.armor.total_rating += helm_type_2.helm;
+		opponent_2.armor.bleed_res += helm_type_2.bleed_res;
+		opponent_2.armor.magic_res += helm_type_2.magic_res;
 		}
-	// Dragon 2 Chest
-	dragon_2.armor.chest = document.getElementById('2_chest').value;
-	if(dragon_2.armor.chest != 'NA') {
-		var chest_type_2 = armor_sets[dragon_2.armor.chest];
-		dragon_2.armor.total_rating += chest_type_2.chest;
-		dragon_2.armor.bleed_res += chest_type_2.bleed_res;
-		dragon_2.armor.magic_res += chest_type_2.magic_res;
+	// Opponent 2 Chest
+	opponent_2.armor.chest = document.getElementById('2_chest').value;
+	if(opponent_2.armor.chest != 'NA') {
+		var chest_type_2 = armor_sets[opponent_2.armor.chest];
+		opponent_2.armor.total_rating += chest_type_2.chest;
+		opponent_2.armor.bleed_res += chest_type_2.bleed_res;
+		opponent_2.armor.magic_res += chest_type_2.magic_res;
 	}
-	// Dragon 2 Tail
-	dragon_2.armor.tail = document.getElementById('2_tail').value;
-	if(dragon_2.armor.tail != 'NA') {
-		var tail_type_2 = armor_sets[dragon_2.armor.tail];
-		dragon_2.armor.total_rating += tail_type_2.tail;
-		dragon_2.armor.bleed_res += tail_type_2.bleed_res;
-		dragon_2.armor.magic_res += tail_type_2.magic_res;
+	// Opponent 2 Tail
+	opponent_2.armor.tail = document.getElementById('2_tail').value;
+	if(opponent_2.armor.tail != 'NA') {
+		var tail_type_2 = armor_sets[opponent_2.armor.tail];
+		opponent_2.armor.total_rating += tail_type_2.tail;
+		opponent_2.armor.bleed_res += tail_type_2.bleed_res;
+		opponent_2.armor.magic_res += tail_type_2.magic_res;
 	}
-	dragon_2.useBreakable = document.getElementById('2_use_breakable').checked;
-	if(document.getElementById('2_head_part').checked) { dragon_2.broken.push('head'); }
-	if(document.getElementById('2_tail_part').checked) { dragon_2.broken.push('tail'); }
-	if(document.getElementById('2_legs_part').checked) { dragon_2.broken.push('legs'); }
+	opponent_2.useBreakable = document.getElementById('2_use_breakable').checked;
+	if(document.getElementById('2_head_part').checked) { opponent_2.broken.push('head'); }
+	if(document.getElementById('2_tail_part').checked) { opponent_2.broken.push('tail'); }
+	if(document.getElementById('2_legs_part').checked) { opponent_2.broken.push('legs'); }
 }
 
 function calculateDamage(attacker, defender) {
@@ -470,7 +478,7 @@ function calculateDamage(attacker, defender) {
 	// Select breath based on max_dmg (x2 if strong); this will always select the breath with greater max
 	if(Object.keys(attacker.breaths).length > 0) {
 		// var used_breath = '';
-		// just find the greatest possible max_dmg available from the breaths the dragon has
+		// just find the greatest possible max_dmg available from the breaths the opponent has
 		var chosen_breath = '?? error';
 		var highest_max_dmg = 0; 
 		Object.keys(attacker.breaths).forEach(att => {
@@ -553,12 +561,12 @@ function armorCheck(defender) {
 	return broken;
 }
 
-function rollBreakable(dragon) {
+function rollBreakable(opponent) {
 	// Duplicate breakable dict
-	if(!dragon.useBreakable) { return 'none'; }
+	if(!opponent.useBreakable) { return 'none'; }
 	var temp = {};
 	Object.assign(temp, breakable);
-	dragon.broken.forEach(part => {
+	opponent.broken.forEach(part => {
 		temp['none'] += temp[part];
 		delete temp[part];
 	});
@@ -577,18 +585,18 @@ function roll() {
 	detailed_breakdown = "";
 	document.getElementById("result").innerHTML = fight();
 	document.getElementById("detailed_breakdown").innerHTML = detailed_breakdown;
-	document.getElementById("dragon_details").innerHTML = printDragonDetails(dragon_1) + "<br><br>" + printDragonDetails(dragon_2);
+	document.getElementById("opponent_details").innerHTML = printOpponentDetails(opponent_1) + "<br><br>" + printOpponentDetails(opponent_2);
 }
 
 function clearForms() {
 	document.getElementById("result").innerHTML = "";
 }
 
-function getDragonLink(import_link) {
+function getOpponentLink(import_link) {
     var x = import_link.split('/');
 	var y = x[5].split('-');
     var name = "";
-    // Regular expression matching digit only strings to stop at the dragon id
+    // Regular expression matching digit only strings to stop at the opponent id
     var num_only = new RegExp("^\\d+$");
     var char_num = new RegExp("[a-zA-Z]{1}\\d");
     for(let i = 0; i < y.length; i++) {
@@ -602,43 +610,43 @@ function getDragonLink(import_link) {
     return "<a href='" + import_link + "'>" + name + "</a>";
 }
 
-function getDragonName(import_link) {
+function getOpponentName(import_link) {
     var x = import_link.split('/');
 	var y = x[5].split('-');
     return y[0];
 }
 
-function printDragonDetails(dragon) {
-	var dragon_string = dragon.link + " details:<br>";
-	dragon_string += "Name: " + dragon.name + "<br>";
-	dragon_string += "Health: " + dragon.health + "<br>";
-	dragon_string += "<br>";
-	dragon_string += "Class Stats: " + "<br>";
-	dragon_string += "> Physical Crit: " + dragon.stats.phys_crit + "<br>";
-	dragon_string += "> Min/Max Raw Damage: " + dragon.stats.min_raw + "/" + dragon.stats.max_raw + "<br>";
-	dragon_string += "> Min/Max Bleed: 0/" + dragon.stats.max_bleed + "<br>";
-	dragon_string += "> Max DPS: " + dragon.stats.max_dps + "<br>";
-	dragon_string += "> Base Resistance: " + dragon.stats.base_res + "<br>";
-	dragon_string += "> Magic Crit: " + dragon.stats.mag_crit + "<br>";
-	dragon_string += "Min/Max Magic: " + (Object.keys(dragon.magic).length <= 0 ? "0/0" : dragon.magic.min_dmg + "/" + dragon.magic.max_dmg) + "<br>";
-	dragon_string += "<br>";
-	dragon_string += "Breath Crit: 4 (Blanket Value for all dragons)<br>";
-	dragon_string += "Breaths: " + (Object.keys(dragon.breaths).length <= 0 ? "None" : "") + "<br>";
-	Object.keys(dragon.breaths).forEach(breath => {
-		dragon_string += "> " + capitaliseFirstLetter(breath) + "<br>";
-		dragon_string += "-> Tier " + dragon.breaths[breath].tier + "<br>", 
-		dragon_string += "-> Strong against " + capitaliseFirstLetter(breath_weaknesses[breath]) + "<br>",
-		dragon_string += "-> Min/Max Damage: 0/" + dragon.breaths[breath].max_dmg + "<br>"
+function printOpponentDetails(opponent) {
+	var opponent_string = opponent.link + " details:<br>";
+	opponent_string += "Name: " + opponent.name + "<br>";
+	opponent_string += "Health: " + opponent.health + "<br>";
+	opponent_string += "<br>";
+	opponent_string += "Class Stats: " + "<br>";
+	opponent_string += "> Physical Crit: " + opponent.stats.phys_crit + "<br>";
+	opponent_string += "> Min/Max Raw Damage: " + opponent.stats.min_raw + "/" + opponent.stats.max_raw + "<br>";
+	opponent_string += "> Min/Max Bleed: 0/" + opponent.stats.max_bleed + "<br>";
+	opponent_string += "> Max DPS: " + opponent.stats.max_dps + "<br>";
+	opponent_string += "> Base Resistance: " + opponent.stats.base_res + "<br>";
+	opponent_string += "> Magic Crit: " + opponent.stats.mag_crit + "<br>";
+	opponent_string += "Min/Max Magic: " + (Object.keys(opponent.magic).length <= 0 ? "0/0" : opponent.magic.min_dmg + "/" + opponent.magic.max_dmg) + "<br>";
+	opponent_string += "<br>";
+	opponent_string += "Breath Crit: 4 (Blanket Value for all opponents)<br>";
+	opponent_string += "Breaths: " + (Object.keys(opponent.breaths).length <= 0 ? "None" : "") + "<br>";
+	Object.keys(opponent.breaths).forEach(breath => {
+		opponent_string += "> " + capitaliseFirstLetter(breath) + "<br>";
+		opponent_string += "-> Tier " + opponent.breaths[breath].tier + "<br>", 
+		opponent_string += "-> Strong against " + capitaliseFirstLetter(breath_weaknesses[breath]) + "<br>",
+		opponent_string += "-> Min/Max Damage: 0/" + opponent.breaths[breath].max_dmg + "<br>"
 	});
-	dragon_string += "<br>";
-	dragon_string += "Armor: " + "<br>";
-	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.helm) + " Helm <br>";
-	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.chest) + " Chest Plate <br>";
-	dragon_string += "> " + capitaliseFirstLetter(dragon.armor.tail) + " Tail Guard <br>";
-	dragon_string += "> Total Armor Rating: " + dragon.armor.total_rating + "<br>";
-	dragon_string += "> Bleed Resistance: " + dragon.armor.bleed_res + "<br>";
-	dragon_string += "> Magic Resistance: " + dragon.armor.magic_res + "<br>";
-	return dragon_string;
+	opponent_string += "<br>";
+	opponent_string += "Armor: " + "<br>";
+	opponent_string += "> " + capitaliseFirstLetter(opponent.armor.helm) + " Helm <br>";
+	opponent_string += "> " + capitaliseFirstLetter(opponent.armor.chest) + " Chest Plate <br>";
+	opponent_string += "> " + capitaliseFirstLetter(opponent.armor.tail) + " Tail Guard <br>";
+	opponent_string += "> Total Armor Rating: " + opponent.armor.total_rating + "<br>";
+	opponent_string += "> Bleed Resistance: " + opponent.armor.bleed_res + "<br>";
+	opponent_string += "> Magic Resistance: " + opponent.armor.magic_res + "<br>";
+	return opponent_string;
 }
 
 function capitaliseFirstLetter(input) {
