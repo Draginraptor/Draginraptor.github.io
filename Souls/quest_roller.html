@@ -1,0 +1,157 @@
+<!doctype html>
+<head>
+    <title>(Test) Quest Roller</title>
+</head>
+<html lang="en">
+    <body>
+        <a href="index.html">Back to navigation</a>
+        <br>
+        <br>
+        <b>Import Link</b><br>
+        <input type="text" id="link">
+        <br>
+        <b>Quests</b><br>
+        <select id="quest">
+            <optgroup label="Basic">
+                <option value="b1">A Path Less Traveled</option>
+                <option value="b2">Counting Sheep</option>
+                <option value="b3">A Festival of Honor</option>
+                <option value="b4">New Discoveries</option>
+                <option value="b5">Tanning the Hide</option>
+                <option value="b6">Show Me Your Bug Collection</option>
+            <optgroup label="Intermediate">
+                <option value="i1">A Missing Friend</option>
+                <option value="i2">Aiding the Injured</option>
+                <option value="i3">Where's the Gold?</option>
+                <option value="i4">The Cutest Critter You Ever did See</option>
+                <option value="i5">The Gardener's Knowledge</option>
+                <option value="i6">Clockmaker's Friend</option>
+                <option value="i7">Hiding in Plain Sight</option>
+            <optgroup label="Master">
+                <option value="m1">Lurking in the Waters</option>
+                <option value="m2">Surveying the Aether</option>
+                <option value="m3">The Breath of a Dragon</option>
+                <option value="m4">A Serpent's Touch</option>
+                <option value="m5">Tiny Griffins</option>
+        </select>
+        <br>
+        <b>Rank</b><br>
+        <select id="rank">
+            <option value="fledgling">Fledgling</option>
+            <option value="primal">Primal</option>
+            <option value="ancient">Ancient</option>
+            <option value="primordial">Primordial</option>
+        </select>
+        <br>
+        <b>Temper</b><br>
+        Timid will reduce injury chance by 5%, Aggressive will increase injury chance by 5%
+        <br>
+        <select id="temper">
+            <option value="na">N/A</option>
+            <option value="timid">Timid</option>
+            <option value="aggressive">Aggressive</option>
+        </select>
+        <br>
+        <b>Magic Level</b><br>
+        <select id="magic_level">
+            <option value="none">None</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+        </select>
+        <br>
+        <b>Magic Type</b><br>
+        <select id="magic_type">
+                <option value="none">None</option>
+                <option value="arcane">Arcane</option>
+                <option value="illusionist">Illusionist</option>
+                <option value="elementalist">Elementalist</option>
+                <option value="healing">Healing</option>
+                <option value="enchantment">Enchantment</option>
+            </select>
+        <hr>
+        <p>(Bonded Overrides Other Dragon)</p>
+        <input type="checkbox" id="bonded">Has Bonded Dragon/Partner or Flight Member?</input>
+        <input type="checkbox" id="other_dragon">Has Other Dragon?</input>
+        <br>
+        <input type="checkbox" id="hoarder">Is Hoarder?</input>
+        <hr>
+        <p>
+            <b>Items</b>
+            -- None --
+        </p>
+        <hr>
+        <p>
+            <b>Familiars</b>
+            <input type="checkbox" name="extras" value="scoria_komodo">Scoria Komodo</input>
+        </p>
+        <input type="checkbox" name="extras" value="domes_taming">Has Domesticated Taming?</input>
+        <hr>
+        <button class="button" onclick=roll()>Roll Quest</button>
+        <p id="result" style="border: 2px solid black;"></p>
+
+        <br>
+        <p>How it rolls:</p>
+        <ol>
+            <li>Gets from html:
+                <ul>
+                    <li>Quest</li>
+                    <li>Rank</li>
+                    <li>Temper</li>
+                    <li>Magic Level and Type</li>
+                    <li>Presence of bonded or other dragon</li>
+                    <li>Presence of hoarder skill</li>
+                    <li>Collects all other possible bonuses (such as from items, familiars or taming)</li>
+                </ul>
+            </li>
+            <li>Gets quest data from the dictionary of quests</li>
+            <li>Gets the base quest pass chance corresponding to the dragon's rank</li>
+            <li>Increase pass chance according to magic level</li>
+            <li>If the dragon's magic type matches the quest, increase the pass chance by 5%</li>
+            <li>If the image contains a bonded dragon or companion, increase the pass chance by 10%
+                <ul>
+                    <li>If the above check fails, check if the image contains any other dragon, and increase the pass chance by 5% if so</li>
+                </ul>
+            </li>
+            <li>Go through all the extras that have been added and increase the pass chance accordingly</li>
+            <li>Final pass chance had been calculated by this point, can be greater than 100</li>
+            <li>Roll a number between 1 - 100 to check if the dragon passes or fails the quest
+                <ul>
+                    <li>It is considered pass if the number rolled is less than the final pass chance (i.e. if final pass chance is 100 or more, pass is guaranteed)</li>
+                </ul>
+            </li>
+            <li>If pass, roll loot
+                <ol type="i">
+                    <li>Set base max loot to 3, adding 1 if the dragon has the Hoarder skill</li>
+                    <li>Get a random number of loot to roll</li>
+                    <li>Roll corresponding number of loots and add to the results string</li>
+                </ol>
+            </li>
+            <li>If fail, roll side quest
+                <ol type="i">
+                    <li>Add side quest flavour text</li>
+                    <li>Randomise side quest to attack</li>
+                    <li>Add side quest submission form</li>
+                    <li>Add all to results string</li>
+                </ol>
+            </li>
+            <li>Regardless, roll for injury
+                <ol type="i">
+                    <li>Get base injury chance based on dragon rank</li>
+                    <li>Increase/decrease base injury chance based on dragon's temper</li>
+                    <li>Roll to see if dragon gets injured, similar to how quest pass is rolled</li>
+                    <li>If pass, roll random injury
+                        <ol type="a">
+                            <li>Roll random injury based on the injury chance table</li>
+                            <li>If its a special case, such as scratches and wild dragon attacks, randomise a damage value</li>
+                        </ol>
+                    </li>
+                    <li>If fail, just state that dragon is not injured
+                </ol>
+            </li>
+            <li>Add injury results to final results</li>
+            <li>Print results</li>
+        </ol>
+    </body>
+
+    <script src = "./quest_roller.js"></script>
+</html>
